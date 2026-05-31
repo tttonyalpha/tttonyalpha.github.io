@@ -111,6 +111,49 @@ h1 {
 }
 
 /**************************************************/
+/* Compact highlights panel. */
+
+#highlights {
+  margin-top: 2em;
+  padding: 1em 1.2em;
+  border: 1px solid #d8dde2;
+  border-radius: 8px;
+  background: #fbfcfd;
+}
+
+#highlights h2 {
+  font-size: 1.35em;
+  line-height: 1.4em;
+  margin: 0 0 0.6em 0;
+  color: #150c21;
+  font-weight: 600;
+}
+
+.highlights-list {
+  max-height: 12em;
+  overflow-y: auto;
+  padding-right: 0.5em;
+}
+
+.highlight-item {
+  line-height: 1.45em;
+  padding: 0.65em 0;
+  border-top: 1px solid #e5e8eb;
+}
+
+.highlight-item:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.highlight-date {
+  display: block;
+  color: #a0a8b0;
+  font-weight: 600;
+  margin-bottom: 0.15em;
+}
+
+/**************************************************/
 /* Section buttons. */
 
 #menu {
