@@ -327,10 +327,15 @@ h3 a:hover {
   margin-bottom: 0.5em;
 }
 
-.publication p {
+.publication p,
+.talk p {
   font-size: 1em;
   line-height: 1.5em;
   color: #a0a8b0;
+}
+
+.media-date {
+  font-weight: 600;
 }
 
 .project-description {
