@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  <meta name="title" content="Does VLA Even Know the Basics?">
+  <meta name="description" content="Project page for Act2Answer: measuring commonsense and world knowledge retention in Vision-Language-Action models through action.">
+  <meta name="keywords" content="Vision-Language-Action, VLA, VLM, robotics, embodied AI, commonsense, world knowledge, benchmark, Act2Answer">
+  <meta name="author" content="Nikita Kachaev, Andrey Moskalenko, Matvey Skripkin, Nikita Kurlaev, Daria Pugacheva, Albina Burlova, Mikhail Kolosov, Denis Shepelev, Andrey Kuznetsov, Elena Tutubalina, Aleksandr I. Panov, Alexey K. Kovalev, Vlad Shakhuro">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Act2Answer">
+  <meta property="og:title" content="Does VLA Even Know the Basics?">
+  <meta property="og:description" content="A lightweight action-as-answer protocol for measuring commonsense and world knowledge retention in VLA models.">
+  <meta property="og:url" content="https://tttonyalpha.github.io/act2answer/">
+  <meta property="og:image" content="https://tttonyalpha.github.io/act2answer/static/images/intro2.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Does VLA Even Know the Basics?">
+  <meta name="twitter:description" content="Act2Answer evaluates whether VLA models can use retained knowledge by answering through action.">
+  <meta name="twitter:image" content="https://tttonyalpha.github.io/act2answer/static/images/intro2.png">
+
+  <meta name="citation_title" content="Does VLA Even Know the Basics? Measuring Commonsense and World Knowledge Retention in Vision-Language-Action Models">
+  <meta name="citation_author" content="Kachaev, Nikita">
+  <meta name="citation_author" content="Moskalenko, Andrey">
+  <meta name="citation_author" content="Skripkin, Matvey">
+  <meta name="citation_author" content="Kurlaev, Nikita">
+  <meta name="citation_author" content="Pugacheva, Daria">
+  <meta name="citation_author" content="Burlova, Albina">
+  <meta name="citation_author" content="Kolosov, Mikhail">
+  <meta name="citation_author" content="Shepelev, Denis">
+  <meta name="citation_author" content="Kuznetsov, Andrey">
+  <meta name="citation_author" content="Tutubalina, Elena">
+  <meta name="citation_author" content="Panov, Aleksandr I.">
+  <meta name="citation_author" content="Kovalev, Alexey K.">
+  <meta name="citation_author" content="Shakhuro, Vlad">
+  <meta name="citation_publication_date" content="2026">
+  <meta name="citation_pdf_url" content="https://tttonyalpha.github.io/act2answer/static/pdfs/act2answer.pdf">
+
+  <title>Does VLA Even Know the Basics?</title>
+
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link rel="apple-touch-icon" href="static/images/icon.png">
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+
+  <style>
+    .paper-kicker {
+      color: #2563eb;
+      font-weight: 800;
+      letter-spacing: 0;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    .stat-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin: 1.5rem 0 0;
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgb(15 23 42 / 0.06);
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-card strong {
+      color: #1e293b;
+      display: block;
+      font-size: 1.65rem;
+      line-height: 1.1;
+    }
+
+    .stat-card span {
+      color: #64748b;
+      display: block;
+      font-size: 0.92rem;
+      margin-top: 0.35rem;
+    }
+
+    .figure-caption {
+      color: #555;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      margin: 0.65rem auto 1.5rem;
+      max-width: 95%;
+      text-align: left;
+    }
+
+    .knowledge-list {
+      display: grid;
+      gap: 0.85rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 1rem;
+    }
+
+    .knowledge-list p {
+      background: #f8fafc;
+      border-left: 4px solid #2563eb;
+      border-radius: 8px;
+      margin: 0;
+      padding: 0.85rem 1rem;
+    }
+
+    .bibtex-header {
+      align-items: center;
+      display: flex;
+      gap: 1rem;
+      justify-content: space-between;
+    }
+
+    .copy-bibtex-btn {
+      align-items: center;
+      background: #1e293b;
+      border: 0;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      display: inline-flex;
+      font-weight: 700;
+      gap: 0.45rem;
+      padding: 0.7rem 1rem;
+    }
+
+    .copy-bibtex-btn:hover {
+      background: #2563eb;
+    }
+
+    pre {
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 768px) {
+      .publication-title {
+        font-size: 2rem !important;
+      }
+
+      .stat-grid,
+      .knowledge-list {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-body {
+        padding: 2.5rem 1rem;
+      }
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "Does VLA Even Know the Basics? Measuring Commonsense and World Knowledge Retention in Vision-Language-Action Models",
+    "description": "Act2Answer adapts VLM knowledge benchmarks to VLA evaluation by requiring agents to answer through action.",
+    "url": "https://tttonyalpha.github.io/act2answer/",
+    "image": "https://tttonyalpha.github.io/act2answer/static/images/intro2.png",
+    "datePublished": "2026",
+    "isAccessibleForFree": true,
+    "keywords": ["Vision-Language-Action", "embodied AI", "commonsense", "world knowledge", "benchmark", "Act2Answer"]
+  }
+  </script>
+</head>
+<body>
+  <button class="scroll-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <main id="main-content">
+    <section class="hero">
+      <div class="hero-body">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered">
+            <div class="column has-text-centered">
+              <p class="paper-kicker">Act2Answer</p>
+              <h1 class="title is-1 publication-title">Does VLA Even Know the Basics? Measuring Commonsense and World Knowledge Retention in Vision-Language-Action Models</h1>
+              <div class="is-size-5 publication-authors">
+                <span class="author-block"><a href="https://tttonyalpha.github.io" target="_blank">Nikita Kachaev</a><sup>*,1</sup>,</span>
+                <span class="author-block">Andrey Moskalenko<sup>*,2,3,4,5</sup>,</span>
+                <span class="author-block">Matvey Skripkin<sup>2,6</sup>,</span>
+                <span class="author-block">Nikita Kurlaev<sup>7</sup>,</span>
+                <span class="author-block">Daria Pugacheva<sup>7,8</sup>,</span>
+                <span class="author-block">Albina Burlova<sup>7,9</sup>,</span>
+                <span class="author-block">Mikhail Kolosov<sup>10</sup>,</span>
+                <span class="author-block">Denis Shepelev<sup>2,5</sup>,</span>
+                <span class="author-block">Andrey Kuznetsov<sup>2</sup>,</span>
+                <span class="author-block">Elena Tutubalina<sup>7,11</sup>,</span>
+                <span class="author-block"><a href="https://grafft.github.io/" target="_blank">Aleksandr I. Panov</a><sup>1,10</sup>,</span>
+                <span class="author-block"><a href="https://scholar.google.com/citations?user=N1zWb74AAAAJ" target="_blank">Alexey K. Kovalev</a><sup>1,10</sup>,</span>
+                <span class="author-block">Vlad Shakhuro<sup>2,4,5</sup></span>
+              </div>
+              <div class="is-size-6 publication-authors">
+                <span class="author-block"><sup>1</sup>CogAI Lab</span>
+                <span class="author-block"><sup>2</sup>FusionBrain Lab</span>
+                <span class="author-block"><sup>3</sup>IAI MSU</span>
+                <span class="author-block"><sup>4</sup>Lomonosov MSU</span>
+                <span class="author-block"><sup>5</sup>NUST MISIS</span>
+                <span class="author-block"><sup>6</sup>Applied AI Institute</span>
+                <span class="author-block"><sup>7</sup>HSE University</span>
+                <span class="author-block"><sup>8</sup>Generalizable AI Systems</span>
+                <span class="author-block"><sup>9</sup>ISP RAS</span>
+                <span class="author-block"><sup>10</sup>MIRAI</span>
+                <span class="author-block"><sup>11</sup>Domain-specific NLP Group</span>
+              </div>
+              <div class="is-size-6 publication-authors">
+                <span class="author-block"><sup>*</sup>Equal contribution</span>
+              </div>
+
+              <div class="column has-text-centered">
+                <div class="publication-links">
+                  <span class="link-block">
+                    <a href="https://google.com" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                      <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                      <span>Paper</span>
+                    </a>
+                  </span>
+                  <span class="link-block" style="margin-top: 4.5px; display: inline-block;">
+                    <span class="button is-normal is-rounded is-dark" style="cursor: default; pointer-events: none;">
+                      Views:&nbsp;<span id="busuanzi_value_page_pv">Loading</span>
+                    </span>
+                  </span>
+                  <span class="link-block">
+                    <a href="#BibTeX" class="external-link button is-normal is-rounded is-dark">
+                      <span class="icon"><i class="fas fa-quote-right"></i></span>
+                      <span>BibTeX</span>
+                    </a>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="hero teaser">
+      <div class="container is-max-desktop" style="max-width: 980px;">
+        <div class="hero-body" style="padding-top: 1rem; padding-bottom: 1rem;">
+          <img src="static/images/intro2.png" alt="Act2Answer evaluation results" style="width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 12px; box-shadow: none; transition: none;">
+          <p class="figure-caption">
+            <strong>Act2Answer evaluates knowledge through action.</strong> The benchmark measures how VLA models perform across diverse commonsense and world-knowledge domains, and compares action-grounded knowledge behavior against standard manipulation performance.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section hero is-light">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-four-fifths">
+            <h2 class="title is-3">Abstract</h2>
+            <div class="content has-text-justified">
+              <p>Embodied Vision-Language-Action (VLA) models are typically obtained by fine-tuning powerful pretrained VLMs on robotics data, yet it is unclear how much commonsense and factual knowledge they retain after adaptation. Failures on knowledge-sensitive tasks are ambiguous, conflating missing knowledge with poor generalization of low-level control. We introduce Act2Answer, a lightweight protocol that adapts VLM knowledge benchmarks to VLA evaluation by requiring agents to answer through action. Each question becomes a short tabletop episode where the agent performs a single object-placement action to select among candidate answers, yielding an action-grounded success rate with reduced control confounds. We curate a test suite of such environments across diverse commonsense and world-knowledge categories and introduce layerwise intent probing to localize answer-relevant information across the VLM backbone and action head. In a large-scale study of 9 VLA models and 9 VLM baselines, we systematically rank models across categories, finding that VLAs show solid performance on simple concepts while exhibiting larger gaps on richer semantic categories relative to their source VLMs, that VQA co-training improves knowledge retention, and that answer-relevant signals peak in middle VLA layers but attenuate upper.</p>
+            </div>
+            <div class="stat-grid">
+              <div class="stat-card"><strong>1,720</strong><span>questions</span></div>
+              <div class="stat-card"><strong>12</strong><span>knowledge categories</span></div>
+              <div class="stat-card"><strong>9</strong><span>VLA models</span></div>
+              <div class="stat-card"><strong>9</strong><span>VLM baselines</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="motivation">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Why Act2Answer?</h2>
+        <p>
+          VLA evaluation is usually task-success centric: if a policy fails, it is difficult to know whether the problem came from perception, low-level control, planning, or missing knowledge. Act2Answer isolates a sharper question: can the model use relevant commonsense or world knowledge to choose an action?
+        </p>
+        <p>
+          Instead of asking a model to decode a textual answer, each VLM benchmark question is converted into a short tabletop episode. The agent sees two visual answer options and must move a cube onto the correct answer plate. This keeps the setting embodied while reducing long-horizon control confounds.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="examples">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Action-as-Answer Episodes</h2>
+        <img src="static/images/samples2.jpg" alt="Act2Answer episode examples" style="width: 100%; border-radius: 12px; transition: none; display: block; margin: 0 auto;">
+        <p class="figure-caption">
+          <strong>Example Act2Answer episodes.</strong> Each episode is built from a VLM benchmark question. The embodied agent must interpret the instruction and control the robot arm to move the cube onto the correct answer plate.
+        </p>
+      </div>
+    </section>
+
+    <section class="section hero is-light" id="method">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Benchmark Construction</h2>
+        <img src="static/images/data_processing3.png" alt="Act2Answer data curation pipeline" style="width: 100%; border-radius: 12px; transition: none; display: block; margin: 0 auto;">
+        <p class="figure-caption">
+          <strong>Data curation pipeline.</strong> Act2Answer selects, filters, normalizes, and converts VLM benchmark items into embodied binary-choice episodes with consistent answer placement.
+        </p>
+        <p>
+          The suite adapts established VLM benchmarks into a shared embodied interface. Questions are rewritten into short robot instructions, answer candidates are grounded as visual plates, and spatial swaps are used to reduce fixed side preferences.
+        </p>
+        <div class="knowledge-list">
+          <p><strong>Physical:</strong> object attributes, states, color, shape, symmetry, affordances, and physical plausibility.</p>
+          <p><strong>Temporal:</strong> event order, duration, time reasoning, and short-horizon prediction.</p>
+          <p><strong>Quantitative:</strong> counting, magnitude comparison, and basic resource reasoning.</p>
+          <p><strong>Biological:</strong> living-world distinctions, vulnerability, animal and plant needs.</p>
+          <p><strong>Social:</strong> emotions, roles, intentions, relations, and interaction context.</p>
+          <p><strong>Normative:</strong> safety rules, public information, traffic rules, and contextually appropriate behavior.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="probing">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Layerwise Intent Probing</h2>
+        <p>
+          Beyond task success, Act2Answer measures whether answer-relevant information is linearly recoverable from internal VLA representations. A probe predicts the selected option from each layer, helping localize whether knowledge remains in the backbone and whether it survives into the action pathway.
+        </p>
+        <img src="static/images/validation_grid_from_txt.png" alt="Layerwise probing results" style="width: 100%; border-radius: 12px; transition: none; display: block; margin: 0 auto;">
+        <p class="figure-caption">
+          <strong>Probing results.</strong> Prefix labels indicate representations from the VLM component, while Action labels indicate representations from the action component. Answer-relevant signals often peak in middle layers and attenuate toward later action layers.
+        </p>
+      </div>
+    </section>
+
+    <section class="section hero is-light" id="additional-examples">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Additional Examples</h2>
+        <div class="columns is-vcentered">
+          <div class="column">
+            <img src="static/images/sample_emotion.jpg" alt="Emotion, celebrity, and living-world examples" style="width: 100%; border-radius: 12px; display: block; transition: none;">
+            <p class="figure-caption"><strong>Social and biological categories.</strong> Emotion, celebrity, and living-world examples.</p>
+          </div>
+          <div class="column">
+            <img src="static/images/sample_time.jpg" alt="Time, traffic, and public-information examples" style="width: 100%; border-radius: 12px; display: block; transition: none;">
+            <p class="figure-caption"><strong>Temporal and normative categories.</strong> Time, traffic, and public-information examples.</p>
+          </div>
+        </div>
+        <img src="static/images/sample_attribute.jpg" alt="Attribute, state, color, symmetry, shape, and counting examples" style="width: 70%; border-radius: 12px; display: block; margin: 0 auto; transition: none;">
+        <p class="figure-caption" style="max-width: 70%;"><strong>Physical and quantitative categories.</strong> Attribute, state, color, symmetry, shape, and counting examples.</p>
+      </div>
+    </section>
+
+    <section class="section" id="BibTeX">
+      <div class="container is-max-desktop content">
+        <div class="bibtex-header">
+          <h2 class="title">BibTeX</h2>
+          <button class="copy-bibtex-btn" onclick="navigator.clipboard.writeText(document.getElementById('bibtex-code').innerText)" title="Copy BibTeX to clipboard">
+            <i class="fas fa-copy"></i>
+            <span>Copy</span>
+          </button>
+        </div>
+        <pre id="bibtex-code"><code>@article{TBA,
+  TBA
+}</code></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
