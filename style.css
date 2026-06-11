@@ -296,6 +296,24 @@ h2 {
   border-bottom: none;
 }
 
+.venue-badge {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0 0 0.45em 0;
+  padding: 0.2em 0.45em;
+  border-radius: 5px;
+  background: #e7e7ec;
+  color: #242129;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.72em;
+  line-height: 1.25em;
+  font-weight: 700;
+  letter-spacing: 0;
+  white-space: normal;
+}
+
 .thumbnail img {
   margin-top: 0.4em;
   border-radius: 5px;

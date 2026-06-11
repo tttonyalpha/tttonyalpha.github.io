@@ -14,7 +14,7 @@
     <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
 
     <!-- Custom Style -->
-    <link rel="stylesheet" href="style.css?v=20260531-media2">
+    <link rel="stylesheet" href="style.css?v=20260603-badges">
 
     <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,10 +32,8 @@
         <div id="intro-text">
           <h1>Nikita Kachaev</h1>
           <p>
-            Hi there! I’m a Research Engineer at Cognitive AI Lab, studying Online Reinforcement Learning, VLM, VLA, foundation models. 
-            I split my time between writing research papers and working on applied projects. I’m currently pursuing a Master’s degree in Machine Learning at <a href="https://en.itmo.ru">ITMO University</a> 
-            and previously completed a Bachelor’s in Physics at <a href="https://www.hse.ru/en/">HSE University</a>. 
-            I completed internships at <a href="https://vk.ru/about">VK</a> and <a href="https://tinkoff-group.com/company-info/summary/">Tinkoff</a> during this time.
+            Hi there! I’m a Research Engineer developing new methods for embodied AI, robot learning, and Vision-Language-Action (VLA) models. 
+            I split my time between research and engineering: building, evaluating, and deploying models for robotic systems, while writing papers at the intersection of online reinforcement learning, foundation models, and robotics.
 
             <br><br>
             <a href="https://scholar.google.com/citations?user=GdG_BDsAAAAJ&hl=en">Google Scholar</a>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -90,8 +88,43 @@
       <div class="grid">
       
           <!-- Publications -->
+
         <div class="list-item publication" data-category="publication">
-          <a href="https://blind-vla-paper.github.io" class="thumbnail"><img src="images/blindvla.gif" alt=""/></a>
+          <a href="https://blind-vla-paper.github.io" class="thumbnail">
+            <span class="venue-badge">under review</span>
+            <img src="images/act2ans.png" alt=""/>
+          </a>
+          <div class="project-description">
+            <h3><a href="https://blind-vla-paper.github.io">Does VLA Even Know the Basics? Limitations in Commonsense and World Knowledge of VLA Models</a></h3>
+            <p>
+              <b>Nikita Kachaev</b>, Andrey Moskalenko, Matvey Skripkin, Nikita Kurlaev, Daria Pugacheva, Albina Burlova, Mikhail Kolosov, Denis Shepelev, Andrey Kuznetsov, Elena Tutubalina, Aleksandr Panov, Alexey Kovalev, Vlad Shakhuro<br>
+                <i>under review</i><br>
+            </p>
+          </div>
+        </div>
+
+
+        <div class="list-item publication" data-category="publication">
+          <a href="https://blind-vla-paper.github.io" class="thumbnail">
+            <span class="venue-badge">under review</span>
+            <img src="images/vla_grounder.png" alt=""/>
+          </a>
+          <div class="project-description">
+            <h3><a href="https://blind-vla-paper.github.io">VLA Grounder: Language-Conditioning Space Optimization for Black-Box VLA Models</a></h3>
+            <p>
+              Damir Shodiev, Aleksei Staroverov, <b>Nikita Kachaev</b>, Alexey Kovalev, Aleksandr Panov<br>
+                <i>under review</i><br>
+                <a href="https://openreview.net/forum?id=LyKpta1bJ0&referrer=%5BAuthor%20Console%5D(%2Fgroup%3Fid%3DICML.cc%2F2026%2FWorkshop%2FDEMO%2FAuthors%23your-submissions)">PDF</a>
+            </p>
+          </div>
+        </div>
+
+
+        <div class="list-item publication" data-category="publication">
+          <a href="https://blind-vla-paper.github.io" class="thumbnail">
+            <span class="venue-badge">AAMAS 2026 Oral</span>
+            <img src="images/blindvla.gif" alt=""/>
+          </a>
           <div class="project-description">
             <h3><a href="https://blind-vla-paper.github.io">Don’t Blind Your VLA: Aligning Visual Representations for OOD Generalization</a></h3>
             <p>
@@ -105,14 +138,16 @@
           </div>
         </div>
     
-        <!-- Publications -->
         <div class="list-item publication" data-category="publication">
-          <a href="https://sites.google.com/view/memorybenchrobots" class="thumbnail"><img src="images/mikasa.gif" alt=""/></a>
+          <a href="https://sites.google.com/view/memorybenchrobots" class="thumbnail">
+            <span class="venue-badge">ICLR 2026</span>
+            <img src="images/mikasa.gif" alt=""/>
+          </a>
           <div class="project-description">
             <h3><a href="https://sites.google.com/view/memorybenchrobots">Memory, Benchmark & Robots: A Benchmark for Solving Complex Tasks with Reinforcement Learning</a></h3>
             <p>
               Egor Cherepanov, <b>Nikita Kachaev</b>, Alexey K. Kovalev, Aleksandr I. Panov<br>
-                <i>The Thirteenth International Conference on Learning Representations (ICLR)</i><br>
+                <i>The Thirteenth International Conference on Learning Representations (ICLR 2026)</i><br>
                 <a href="https://sites.google.com/view/memorybenchrobots">Project Page</a>&nbsp;&nbsp;&bull;&nbsp;
                 <a href="https://arxiv.org/abs/2502.10550">PDF</a>&nbsp;&nbsp;&bull;&nbsp;
                 <a href="https://github.com/CognitiveAISystems/MIKASA-Robo">Code</a>
@@ -121,7 +156,25 @@
         </div>
         
         <div class="list-item publication" data-category="publication">
-          <a href="https://arxiv.org/abs/2510.13367" class="thumbnail"><img src="images/onlinetrans.png" alt=""/></a>
+          <a href="https://arxiv.org/abs/2412.06531" class="thumbnail">
+            <span class="venue-badge">ICLR 2026</span>
+            <img src="images/unraveling.png" alt=""/>
+          </a>
+          <div class="project-description">
+            <h3><a href="https://arxiv.org/abs/2412.06531">Unraveling the Complexity of Memory in RL Agents: an Approach for Classification and Evaluation</a></h3>
+            <p>
+              Egor Cherepanov, <b>Nikita Kachaev</b>, Artem Zholus, Alexey K. Kovalev, Aleksandr I. Panov<br>
+                <i>The Thirteenth International Conference on Learning Representations (ICLR 2026), Poster</i><br>
+                <a href="https://arxiv.org/abs/2412.06531">PDF</a>
+            </p>
+          </div>
+        </div>
+
+        <div class="list-item publication" data-category="publication">
+          <a href="https://arxiv.org/abs/2510.13367" class="thumbnail">
+            <span class="venue-badge">ICLR@WRL 2025</span>
+            <img src="images/onlinetrans.png" alt=""/>
+          </a>
           <div class="project-description">
             <h3><a href="https://arxiv.org/abs/2510.13367">A New Perspective on Transformers in Online Reinforcement Learning for Continuous Control</a></h3>
             <p>
@@ -133,28 +186,20 @@
         </div>
 
         <div class="list-item publication" data-category="publication">
-          <a href="https://arxiv.org/abs/2508.15663" class="thumbnail"><img src="images/mindmotion.png" alt=""/></a>
+          <a href="https://arxiv.org/abs/2508.15663" class="thumbnail">
+            <span class="venue-badge">RAS 2025</span>
+            <img src="images/mindmotion.png" alt=""/>
+          </a>
           <div class="project-description">
             <h3><a href="https://arxiv.org/abs/2508.15663">Mind and Motion Aligned: A Joint Evaluation IsaacSim Benchmark for Task Planning and Low-Level Policies in Mobile Manipulation</a></h3>
             <p>
               <b>Nikita Kachaev</b>, Andrei Spiridonov, Andrey Gorodetsky, Kirill Muravyev, Nikita Oskolkov, Aditya Narendra, Vlad Shakhuro, Dmitry Makarov, Aleksandr I. Panov, Polina Fedotova, Alexey K. Kovalev<br>
-                <i>Reports of the RAS: Mathematics, Informatics, and Control Processes, paper, 2025</i><br>
+                <i>Reports of the RAS: Mathematics, Informatics, and Control Processes, Journal, 2025</i><br>
                 <a href="https://arxiv.org/abs/2508.15663">PDF</a>
             </p>
           </div>
         </div>
 
-        <div class="list-item publication" data-category="publication">
-          <a href="https://arxiv.org/abs/2412.06531" class="thumbnail"><img src="images/unraveling.png" alt=""/></a>
-          <div class="project-description">
-            <h3><a href="https://arxiv.org/abs/2412.06531">Unraveling the Complexity of Memory in RL Agents: an Approach for Classification and Evaluation</a></h3>
-            <p>
-              Egor Cherepanov, <b>Nikita Kachaev</b>, Artem Zholus, Alexey K. Kovalev, Aleksandr I. Panov<br>
-                <i>Conference on Robot Learnin  (CORL), RemembeRL Workshop, Poster, 2025</i><br>
-                <a href="https://arxiv.org/abs/2412.06531">PDF</a>
-            </p>
-          </div>
-        </div>
 
         <!-- Talks -->
     <div class="list-item talk" data-category="talk">
