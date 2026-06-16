@@ -66,8 +66,27 @@
   <script defer src="static/js/index.js"></script>
 
   <style>
+    :root {
+      --accent: #2563eb;
+      --ink: #1e293b;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      /* Heatmap palette (matches the paper's RdYlGn cell coloring) */
+      --heat-dg: #66bd63;
+      --heat-g:  #a6d96a;
+      --heat-lg: #d9ef8b;
+      --heat-y:  #fee08b;
+      --heat-o:  #fdae61;
+      --heat-r:  #f46d43;
+    }
+
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+
+    /* Wider main body */
+    .container.is-max-desktop { max-width: 1100px; }
+
     .paper-kicker {
-      color: #2563eb;
+      color: var(--accent);
       font-weight: 800;
       letter-spacing: 0;
       margin-bottom: 1rem;
@@ -83,7 +102,7 @@
 
     .stat-card {
       background: #fff;
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--line);
       border-radius: 8px;
       box-shadow: 0 4px 12px rgb(15 23 42 / 0.06);
       padding: 1rem;
@@ -91,14 +110,14 @@
     }
 
     .stat-card strong {
-      color: #1e293b;
+      color: var(--ink);
       display: block;
       font-size: 1.65rem;
       line-height: 1.1;
     }
 
     .stat-card span {
-      color: #64748b;
+      color: var(--muted);
       display: block;
       font-size: 0.92rem;
       margin-top: 0.35rem;
@@ -122,11 +141,245 @@
 
     .knowledge-list p {
       background: #f8fafc;
-      border-left: 4px solid #2563eb;
+      border-left: 4px solid var(--accent);
       border-radius: 8px;
       margin: 0;
       padding: 0.85rem 1rem;
     }
+
+    /* ---- Findings / takeaways callout ---- */
+    .findings {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin: 1.25rem 0 0;
+    }
+    .finding-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgb(15 23 42 / 0.05);
+      padding: 1.1rem 1.15rem;
+    }
+    .finding-card h4 {
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      margin: 0 0 0.45rem;
+      text-transform: uppercase;
+    }
+    .finding-card p { color: #374151; font-size: 0.95rem; line-height: 1.5; margin: 0; }
+
+    .takeaway-box {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--accent);
+      border-radius: 10px;
+      margin-top: 1.5rem;
+      padding: 1.25rem 1.4rem;
+    }
+    .takeaway-box h3 { color: var(--ink); font-size: 1.1rem; font-weight: 800; margin: 0 0 0.6rem; }
+    .takeaway-box ul { margin: 0; padding-left: 1.1rem; }
+    .takeaway-box li { color: #374151; line-height: 1.55; margin-bottom: 0.4rem; }
+
+    /* ---- Tables ---- */
+    .table-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      box-shadow: 0 4px 16px rgb(15 23 42 / 0.05);
+    }
+
+    table.results, table.plain {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.8rem;
+      background: #fff;
+    }
+    table.plain { font-size: 0.92rem; }
+
+    table.results thead th, table.plain thead th {
+      background: #f1f5f9;
+      color: var(--ink);
+      font-weight: 700;
+      padding: 0.5rem 0.55rem;
+      text-align: center;
+      white-space: nowrap;
+    }
+    table.results th.group { border-bottom: 1px solid var(--line); }
+    table.results td {
+      padding: 0.4rem 0.45rem;
+      text-align: center;
+      border-top: 1px solid #eef2f7;
+      white-space: nowrap;
+    }
+    table.results td.model, table.results th.model {
+      text-align: left;
+      font-weight: 600;
+      white-space: nowrap;
+      position: sticky;
+      left: 0;
+      background: #fff;
+      z-index: 2;
+      border-right: 1px solid var(--line);
+      padding-left: 0.75rem;
+    }
+    table.results thead th.model { background: #f1f5f9; z-index: 3; }
+
+    /* block divider rows (VLM vs VLA) */
+    tr.block-head td {
+      background: var(--ink);
+      color: #fff;
+      font-weight: 700;
+      text-align: left;
+      letter-spacing: 0.02em;
+      padding: 0.4rem 0.75rem;
+      position: sticky;
+      left: 0;
+    }
+
+    /* heatmap cells */
+    td.h-dg { background: var(--heat-dg); }
+    td.h-g  { background: var(--heat-g); }
+    td.h-lg { background: var(--heat-lg); }
+    td.h-y  { background: var(--heat-y); }
+    td.h-o  { background: var(--heat-o); }
+    td.h-r  { background: var(--heat-r); color: #fff; }
+    td.h-dg, td.h-g, td.h-lg, td.h-y, td.h-o { color: #1a2e05; }
+    td.best { font-weight: 800; }
+
+    /* plain tables */
+    table.plain th, table.plain td {
+      padding: 0.55rem 0.7rem;
+      border-top: 1px solid #eef2f7;
+      text-align: left;
+    }
+    table.plain td.num, table.plain th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    table.plain tbody tr:nth-child(even) { background: #f8fafc; }
+    table.plain tbody td.best { font-weight: 800; color: var(--ink); }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem 0.9rem;
+      margin: 0 0 0.85rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .legend .swatch {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .legend .chip {
+      width: 16px; height: 16px; border-radius: 4px; display: inline-block;
+      border: 1px solid rgb(0 0 0 / 0.08);
+    }
+
+    .table-note { color: var(--muted); font-size: 0.85rem; line-height: 1.5; margin-top: 0.7rem; }
+
+    /* ---- Interactive domain wheel (donut) ---- */
+    .pie-wrap { display: flex; gap: 2rem; align-items: center; flex-wrap: wrap; justify-content: center; margin-top: 1rem; }
+    .pie-figure { flex: 0 0 auto; }
+    .pie-svg { width: 380px; max-width: 86vw; height: auto; display: block; }
+    .pie-svg path.slice { cursor: pointer; stroke: #fff; stroke-width: 2.5; transition: opacity .15s ease, transform .15s ease; transform-origin: 200px 200px; }
+    .pie-svg.has-active path.slice:not(.active) { opacity: .32; }
+    .pie-svg path.slice.active { transform: scale(1.045); }
+    .pie-svg path.slice:focus { outline: none; }
+    .pie-svg text.slice-label { fill: #1f2937; font-weight: 700; font-size: 13px; pointer-events: none; font-family: 'Inter', sans-serif; }
+    .pie-center-num { fill: var(--ink); font-weight: 800; }
+    .pie-center-lbl { fill: var(--muted); font-weight: 600; }
+
+    .pie-panel { flex: 1 1 300px; min-width: 280px; background: #fff; border: 1px solid var(--line);
+      border-radius: 12px; box-shadow: 0 4px 16px rgb(15 23 42 / .05); padding: 1.1rem 1.25rem; min-height: 232px; }
+    .pie-panel .pp-head { display: flex; align-items: center; gap: .5rem; font-size: 1.15rem; font-weight: 800; color: var(--ink); margin-bottom: .4rem; }
+    .pie-panel .pp-dot { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+    .pie-panel .pp-sub { color: #475569; font-size: .93rem; line-height: 1.5; margin: 0; }
+    .pie-panel table.pp-table { width: 100%; border-collapse: collapse; font-size: .86rem; margin: .35rem 0 .2rem; }
+    .pie-panel table.pp-table th { text-align: left; color: var(--muted); font-weight: 600; font-size: .76rem; text-transform: uppercase; letter-spacing: .03em; padding: .25rem .4rem; border-bottom: 1px solid var(--line); }
+    .pie-panel table.pp-table td { padding: .3rem .4rem; border-top: 1px solid #f1f5f9; color: #374151; }
+    .pie-panel table.pp-table td.num, .pie-panel table.pp-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .pie-panel .pp-total { margin-top: .55rem; font-weight: 700; color: var(--ink); font-size: .9rem; }
+
+    @media (max-width: 768px) { .pie-panel { min-width: 0; } }
+
+    /* ---- Interactive radar chart ---- */
+    .radar-wrap { position: relative; width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: .9rem .9rem .65rem; box-shadow: 0 6px 22px rgb(15 23 42 / 0.08); }
+    .radar-svg { width: 100%; height: auto; display: block; }
+    .radar-svg .cat-sector { fill-opacity: 0.15; pointer-events: none; }
+    .radar-svg .grid-ring { fill: none; stroke: #b9c4d3; stroke-width: 1; stroke-dasharray: 1.5 4; stroke-linecap: round; }
+    .radar-svg .grid-ring-outer { stroke-dasharray: none; stroke: #aab6c6; }
+    .radar-svg .grid-spoke { stroke: #b9c4d3; stroke-width: 1; stroke-linecap: round; }
+    .radar-svg .axis-label { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px; fill: #334155; cursor: pointer; }
+    .radar-svg .ring-label { font-family: 'Inter', sans-serif; font-size: 9px; fill: #94a3b8; }
+    .radar-svg .model-poly { fill-opacity: 0.07; stroke-width: 2; pointer-events: fill; cursor: pointer; transition: fill-opacity .15s, stroke-opacity .15s, stroke-width .15s; }
+    .radar-svg .model-dot { stroke: #fff; stroke-width: 1; transition: opacity .15s; }
+    .radar-svg .model-dot:hover { r: 5px; }
+    .radar-svg.has-hl .model-group:not(.hl) .model-poly { fill-opacity: 0; stroke-opacity: .16; }
+    .radar-svg.has-hl .model-group:not(.hl) .model-dot { opacity: .16; }
+    .radar-svg .model-group.hl .model-poly { fill-opacity: 0.2; stroke-width: 3; }
+    .radar-svg .model-group.off { display: none; }
+
+    .radar-readout { min-height: 1.5em; text-align: center; font-size: .84rem; color: var(--muted); margin: .25rem 0 .5rem; line-height: 1.4; }
+    .radar-readout strong { color: var(--ink); }
+
+    .radar-legend { display: flex; flex-wrap: wrap; gap: .3rem .55rem; justify-content: center; }
+    .radar-legend .leg-item { display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; font-size: .8rem; font-weight: 600; color: #334155; padding: .12rem .35rem; border-radius: 6px; user-select: none; }
+    .radar-legend .leg-item:hover { background: #f1f5f9; }
+    .radar-legend .leg-item.off { opacity: .42; text-decoration: line-through; }
+    .radar-legend .leg-swatch { width: 13px; height: 13px; border-radius: 4px; flex: 0 0 auto; }
+
+    .libero-panel { margin-top: .8rem; border-top: 1px solid var(--line); padding-top: .7rem; }
+    .libero-title { font-size: .7rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: .55rem; }
+    .libero-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; }
+    .libero-cell .lc-model { font-size: .78rem; font-weight: 700; color: var(--ink); text-align: center; margin-bottom: .35rem; }
+    .libero-row { display: flex; align-items: center; gap: .3rem; font-size: .64rem; color: var(--muted); margin: .18rem 0; }
+    .libero-row .lr-lab { width: 58px; text-align: right; font-weight: 600; flex: 0 0 auto; }
+    .libero-row .lr-val { width: 26px; text-align: left; font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 700; flex: 0 0 auto; }
+    .libero-bar { flex: 1; height: 10px; border-radius: 5px; background: #eef2f7; overflow: hidden; }
+    .libero-bar > span { display: block; height: 100%; border-radius: 5px; }
+    .libero-bar.a2a > span { background: #ef9a9a; }
+    .libero-bar.lib > span { background: #9db8e0; }
+
+    /* ---- Interactive probing line charts ---- */
+    .probing-charts { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: .7rem .7rem .55rem; box-shadow: 0 6px 22px rgb(15 23 42 / 0.08); }
+    .probing-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .3rem .5rem; }
+    .pl-svg { width: 100%; height: auto; display: block; }
+    .pl-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px; fill: var(--ink); }
+    .pl-grid { stroke: #eef2f7; stroke-width: 1; }
+    .pl-axislab { font-family: 'Inter', sans-serif; font-size: 9px; fill: #94a3b8; }
+    .pl-line { fill: none; stroke-width: 1.6; transition: stroke-width .12s; }
+    .pl-line.action { stroke-dasharray: 4 3; }
+    .pl-fill { stroke: none; fill-opacity: 0.1; transition: fill-opacity .12s; }
+    .pl-group.hl .pl-fill { fill-opacity: 0.24; }
+    .pl-dot { stroke-width: 1; transition: opacity .12s; }
+    .pl-dot:hover { r: 4; }
+    .pl-group { transition: opacity .12s; }
+    .pl-group.off { display: none; }
+    .pl-group.dim { opacity: .1; }
+    .pl-group.hl .pl-line { stroke-width: 2.8; }
+
+    .probing-legend { display: flex; flex-wrap: wrap; gap: .25rem .55rem; justify-content: center; align-items: center; margin-top: .55rem; }
+    .probing-legend .leg-item { display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; font-size: .78rem; font-weight: 600; color: #334155; padding: .1rem .32rem; border-radius: 6px; user-select: none; }
+    .probing-legend .leg-item:hover { background: #f1f5f9; }
+    .probing-legend .leg-item.off { opacity: .42; text-decoration: line-through; }
+    .probing-legend .leg-line { width: 16px; height: 3px; border-radius: 2px; flex: 0 0 auto; }
+    .probing-parts { display: inline-flex; gap: .55rem; align-items: center; font-size: .72rem; font-weight: 600; color: var(--muted); border-left: 1px solid var(--line); padding-left: .55rem; }
+    .probing-parts span { display: inline-flex; align-items: center; gap: .25rem; }
+    .probing-axisnote { text-align: center; font-size: .72rem; color: var(--muted); margin-top: .3rem; }
+    .probing-plot { display: flex; align-items: stretch; }
+    .probing-ylabel { writing-mode: vertical-rl; transform: rotate(180deg); font-weight: 700; font-size: .82rem; color: var(--ink); display: flex; align-items: center; justify-content: center; padding-right: .2rem; }
+    .probing-plot .probing-grid { flex: 1; }
+    .probing-xlabel { text-align: center; font-weight: 700; font-size: .84rem; color: var(--ink); margin-top: .15rem; }
+    .probing-readout { min-height: 1.4em; text-align: center; font-size: .85rem; color: var(--muted); margin-top: .4rem; }
+    .probing-readout strong { font-weight: 800; }
+    tr[data-pmodel] { cursor: pointer; }
+    tr[data-pmodel]:hover { background: #eef2f7 !important; }
+
+    @media (max-width: 600px) { .probing-grid { grid-template-columns: 1fr; } }
 
     .bibtex-header {
       align-items: center;
@@ -137,7 +390,7 @@
 
     .copy-bibtex-btn {
       align-items: center;
-      background: #1e293b;
+      background: var(--ink);
       border: 0;
       border-radius: 8px;
       color: white;
@@ -148,27 +401,22 @@
       padding: 0.7rem 1rem;
     }
 
-    .copy-bibtex-btn:hover {
-      background: #2563eb;
+    .copy-bibtex-btn:hover { background: var(--accent); }
+
+    .button.is-disabled-link {
+      opacity: 0.65;
+      cursor: not-allowed;
+      pointer-events: none;
     }
 
-    pre {
-      white-space: pre-wrap;
-    }
+    pre { white-space: pre-wrap; }
 
     @media (max-width: 768px) {
-      .publication-title {
-        font-size: 2rem !important;
-      }
-
+      .publication-title { font-size: 2rem !important; }
       .stat-grid,
-      .knowledge-list {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-body {
-        padding: 2.5rem 1rem;
-      }
+      .knowledge-list,
+      .findings { grid-template-columns: 1fr; }
+      .hero-body { padding: 2.5rem 1rem; }
     }
   </style>
 
@@ -201,18 +449,18 @@
               <h1 class="title is-1 publication-title">Does VLA Even Know the Basics? Measuring Commonsense and World Knowledge Retention in Vision-Language-Action Models</h1>
               <div class="is-size-5 publication-authors">
                 <span class="author-block"><a href="https://tttonyalpha.github.io" target="_blank">Nikita Kachaev</a><sup>*,1</sup>,</span>
-                <span class="author-block">Andrey Moskalenko<sup>*,2,3,4,5</sup>,</span>
-                <span class="author-block">Matvey Skripkin<sup>2,6</sup>,</span>
+                <span class="author-block"><a href="https://scholar.google.com/citations?user=_13jza8AAAAJ&amp;hl=en" target="_blank">Andrey Moskalenko</a><sup>*,2,3,4,5</sup>,</span>
+                <span class="author-block"><a href="https://scholar.google.com/citations?user=hAlwb4wAAAAJ&amp;hl=ru" target="_blank">Matvey Skripkin</a><sup>2,6</sup>,</span>
                 <span class="author-block">Nikita Kurlaev<sup>7</sup>,</span>
-                <span class="author-block">Daria Pugacheva<sup>7,8</sup>,</span>
-                <span class="author-block">Albina Burlova<sup>7,9</sup>,</span>
-                <span class="author-block">Mikhail Kolosov<sup>10</sup>,</span>
-                <span class="author-block">Denis Shepelev<sup>2,5</sup>,</span>
-                <span class="author-block">Andrey Kuznetsov<sup>2</sup>,</span>
-                <span class="author-block">Elena Tutubalina<sup>7,11</sup>,</span>
+                <span class="author-block"><a href="https://scholar.google.com/citations?hl=ru&amp;user=es2_c0IAAAAJ&amp;view_op=list_works&amp;sortby=pubdate" target="_blank">Daria Pugacheva</a><sup>7,8</sup>,</span>
+                <span class="author-block"><a href="https://github.com/AlbinaBurlova" target="_blank">Albina Burlova</a><sup>7,9</sup>,</span>
+                <span class="author-block"><a href="https://scholar.google.com/citations?user=UYMXlQsAAAAJ&amp;hl=en" target="_blank">Mikhail Kolosov</a><sup>10</sup>,</span>
+                <span class="author-block"><a href="https://scholar.google.com/citations?user=IUkFdpUAAAAJ&amp;hl=en" target="_blank">Denis Shepelev</a><sup>2,5</sup>,</span>
+                <span class="author-block"><a href="https://scholar.google.com/citations?user=q0lIfCEAAAAJ&amp;hl=en" target="_blank">Andrey Kuznetsov</a><sup>2</sup>,</span>
+                <span class="author-block"><a href="https://scholar.google.com/citations?user=npM9yekAAAAJ&amp;hl=ru" target="_blank">Elena Tutubalina</a><sup>7,11</sup>,</span>
                 <span class="author-block"><a href="https://grafft.github.io/" target="_blank">Aleksandr I. Panov</a><sup>1,10</sup>,</span>
                 <span class="author-block"><a href="https://scholar.google.com/citations?user=N1zWb74AAAAJ" target="_blank">Alexey K. Kovalev</a><sup>1,10</sup>,</span>
-                <span class="author-block">Vlad Shakhuro<sup>2,4,5</sup></span>
+                <span class="author-block"><a href="https://scholar.google.com/citations?user=MuPLmJsAAAAJ&amp;hl=en" target="_blank">Vlad Shakhuro</a><sup>2,4,5</sup></span>
               </div>
               <div class="is-size-6 publication-authors">
                 <span class="author-block"><sup>1</sup>CogAI Lab</span>
@@ -234,10 +482,16 @@
               <div class="column has-text-centered">
                 <div class="publication-links">
                   <span class="link-block">
-                    <a href="https://google.com" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                    <span class="button is-normal is-rounded is-dark is-disabled-link" title="Paper link coming soon">
                       <span class="icon"><i class="fas fa-file-pdf"></i></span>
-                      <span>Paper</span>
-                    </a>
+                      <span>Paper (coming soon)</span>
+                    </span>
+                  </span>
+                  <span class="link-block">
+                    <span class="button is-normal is-rounded is-dark is-disabled-link" title="Code release coming soon">
+                      <span class="icon"><i class="fab fa-github"></i></span>
+                      <span>Code (coming soon)</span>
+                    </span>
                   </span>
                   <span class="link-block" style="margin-top: 4.5px; display: inline-block;">
                     <span class="button is-normal is-rounded is-dark" style="cursor: default; pointer-events: none;">
@@ -258,54 +512,166 @@
       </div>
     </section>
 
-    <section class="hero teaser">
-      <div class="container is-max-desktop" style="max-width: 980px;">
-        <div class="hero-body" style="padding-top: 1rem; padding-bottom: 1rem;">
-          <img src="static/images/intro2.png" alt="Act2Answer evaluation results" style="width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 12px; box-shadow: none; transition: none;">
-          <p class="figure-caption">
-            <strong>Act2Answer evaluates knowledge through action.</strong> The benchmark measures how VLA models perform across diverse commonsense and world-knowledge domains, and compares action-grounded knowledge behavior against standard manipulation performance.
-          </p>
-        </div>
-      </div>
-    </section>
-
     <section class="section hero is-light">
       <div class="container is-max-desktop">
-        <div class="columns is-centered has-text-centered">
-          <div class="column is-four-fifths">
+        <div class="columns is-vcentered">
+          <div class="column is-6">
             <h2 class="title is-3">Abstract</h2>
             <div class="content has-text-justified">
-              <p>Embodied Vision-Language-Action (VLA) models are typically obtained by fine-tuning powerful pretrained VLMs on robotics data, yet it is unclear how much commonsense and factual knowledge they retain after adaptation. Failures on knowledge-sensitive tasks are ambiguous, conflating missing knowledge with poor generalization of low-level control. We introduce Act2Answer, a lightweight protocol that adapts VLM knowledge benchmarks to VLA evaluation by requiring agents to answer through action. Each question becomes a short tabletop episode where the agent performs a single object-placement action to select among candidate answers, yielding an action-grounded success rate with reduced control confounds. We curate a test suite of such environments across diverse commonsense and world-knowledge categories and introduce layerwise intent probing to localize answer-relevant information across the VLM backbone and action head. In a large-scale study of 9 VLA models and 9 VLM baselines, we systematically rank models across categories, finding that VLAs show solid performance on simple concepts while exhibiting larger gaps on richer semantic categories relative to their source VLMs, that VQA co-training improves knowledge retention, and that answer-relevant signals peak in middle VLA layers but attenuate upper.</p>
-            </div>
-            <div class="stat-grid">
-              <div class="stat-card"><strong>1,720</strong><span>questions</span></div>
-              <div class="stat-card"><strong>12</strong><span>knowledge categories</span></div>
-              <div class="stat-card"><strong>9</strong><span>VLA models</span></div>
-              <div class="stat-card"><strong>9</strong><span>VLM baselines</span></div>
+              <p>Embodied Vision-Language-Action (VLA) models are typically obtained by fine-tuning powerful pretrained VLMs on robotics data, yet it is unclear how much commonsense and factual knowledge they retain after adaptation. Failures on knowledge-sensitive tasks are ambiguous, conflating missing knowledge with poor generalization of low-level control. We introduce <strong>Act2Answer</strong>, a lightweight protocol that adapts VLM knowledge benchmarks to VLA evaluation by requiring agents to answer through action. Each question becomes a short tabletop episode where the agent performs a single object-placement action to select among candidate answers, yielding an action-grounded success rate with reduced control confounds. We curate a test suite of such environments across diverse commonsense and world-knowledge categories and introduce layerwise intent probing to localize answer-relevant information across the VLM backbone and action head. In a large-scale study of 7 VLA models and 9 VLM baselines, we systematically rank models across categories, finding that VLAs show solid performance on simple concepts while exhibiting larger gaps on richer semantic categories relative to their source VLMs, that VQA co-training is associated with better knowledge retention, and that answer-relevant signals peak in middle VLA layers but attenuate in upper layers.</p>
             </div>
           </div>
+          <div class="column is-6">
+            <figure style="margin: 0;">
+              <div class="radar-wrap" id="radarWrap">
+                <svg id="radarChart" class="radar-svg" viewBox="0 0 500 500" role="img" aria-label="Interactive radar chart of VLA models across 12 knowledge categories"></svg>
+                <div class="radar-readout" id="radarReadout"></div>
+                <div class="radar-legend" id="radarLegend"></div>
+                <div class="libero-panel">
+                  <div class="libero-title">Act2Answer (knowledge) vs. LIBERO (manipulation)</div>
+                  <div class="libero-grid">
+                    <div class="libero-cell">
+                      <div class="lc-model">SpatialVLA</div>
+                      <div class="libero-row"><span class="lr-lab">Act2Answer</span><div class="libero-bar a2a"><span style="width:5%"></span></div><span class="lr-val">5%</span></div>
+                      <div class="libero-row"><span class="lr-lab">LIBERO</span><div class="libero-bar lib"><span style="width:76%"></span></div><span class="lr-val">76%</span></div>
+                    </div>
+                    <div class="libero-cell">
+                      <div class="lc-model">&pi;<sub>0</sub></div>
+                      <div class="libero-row"><span class="lr-lab">Act2Answer</span><div class="libero-bar a2a"><span style="width:8%"></span></div><span class="lr-val">8%</span></div>
+                      <div class="libero-row"><span class="lr-lab">LIBERO</span><div class="libero-bar lib"><span style="width:94%"></span></div><span class="lr-val">94%</span></div>
+                    </div>
+                    <div class="libero-cell">
+                      <div class="lc-model">InternVLA-M1</div>
+                      <div class="libero-row"><span class="lr-lab">Act2Answer</span><div class="libero-bar a2a"><span style="width:11%"></span></div><span class="lr-val">11%</span></div>
+                      <div class="libero-row"><span class="lr-lab">LIBERO</span><div class="libero-bar lib"><span style="width:95%"></span></div><span class="lr-val">95%</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <script>
+              (function () {
+                var cats = ['Emotion', 'Attribute', 'State', 'Color', 'Shape', 'Symmetry', 'Counting', 'Time', 'Public Info', 'Traffic', 'Celebrity', 'Living World'];
+                var models = [
+                  { name: 'SpatialVLA', color: '#e0a72e', vals: [47, 48, 50, 87, 83, 45, 52, 46, 51, 57, 55, 49] },
+                  { name: 'π₀', color: '#e2683a', vals: [51, 50, 48, 86, 49, 46, 50, 48, 46, 48, 38, 45] },
+                  { name: 'Magma', color: '#8b6fd1', vals: [72, 63, 59, 89, 81, 37, 51, 77, 88, 80, 94, 77] },
+                  { name: 'Xiaomi-Robotics-R0', color: '#2fa37a', vals: [63, 52, 50, 91, 82, 58, 48, 52, 64, 57, 68, 56] },
+                  { name: 'InternVLA-M1', color: '#9a5f48', vals: [53, 49, 53, 90, 66, 43, 48, 49, 54, 53, 52, 58] },
+                  { name: 'OpenVLA', color: '#2f7ec4', vals: [48, 51, 49, 89, 64, 45, 48, 49, 49, 46, 50, 52] }
+                ];
+                var NS = 'http://www.w3.org/2000/svg';
+                var svg = document.getElementById('radarChart');
+                var legend = document.getElementById('radarLegend');
+                var readout = document.getElementById('radarReadout');
+                if (!svg) return;
+                var cx = 250, cy = 250, R = 158, N = cats.length;
+                function ang(i) { return (i * (360 / N) - 90) * Math.PI / 180; }
+                function pt(val, i) { var r = val / 100 * R, a = ang(i); return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; }
+                function mk(tag, attrs) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); return e; }
+                function ptDeg(rad, deg) { var a = (deg - 90) * Math.PI / 180; return [cx + rad * Math.cos(a), cy + rad * Math.sin(a)]; }
+
+                // category background sectors, colored by knowledge domain
+                var catColors = ['#e08a4b', '#6f9bd1', '#6f9bd1', '#6f9bd1', '#6f9bd1', '#6f9bd1', '#cb5b4c', '#7cc47f', '#57bfae', '#57bfae', '#e8c34a', '#a05bb5'];
+                for (var s = 0; s < N; s++) {
+                  var sa0 = (s - 0.5) * (360 / N), sa1 = (s + 0.5) * (360 / N);
+                  var sp0 = ptDeg(R, sa0), sp1 = ptDeg(R, sa1);
+                  svg.appendChild(mk('path', { d: 'M ' + cx + ' ' + cy + ' L ' + sp0[0].toFixed(1) + ' ' + sp0[1].toFixed(1) + ' A ' + R + ' ' + R + ' 0 0 1 ' + sp1[0].toFixed(1) + ' ' + sp1[1].toFixed(1) + ' Z', 'class': 'cat-sector', fill: catColors[s] }));
+                }
+
+                [20, 40, 60, 80, 100].forEach(function (v) {
+                  var rad = v / 100 * R;
+                  svg.appendChild(mk('circle', { cx: cx, cy: cy, r: rad.toFixed(1), 'class': v === 100 ? 'grid-ring grid-ring-outer' : 'grid-ring' }));
+                  var t = mk('text', { x: cx + 4, y: (cy - rad + 3).toFixed(1), 'class': 'ring-label' });
+                  t.textContent = v; svg.appendChild(t);
+                });
+                for (var i = 0; i < N; i++) {
+                  var ob = ptDeg(R, (i + 0.5) * (360 / N));
+                  svg.appendChild(mk('line', { x1: cx, y1: cy, x2: ob[0].toFixed(1), y2: ob[1].toFixed(1), 'class': 'grid-spoke' }));
+                  var lp = pt(118, i), a = ang(i);
+                  var t = mk('text', { x: lp[0].toFixed(1), y: lp[1].toFixed(1), 'class': 'axis-label', 'data-axis': i });
+                  t.setAttribute('text-anchor', Math.abs(Math.cos(a)) < 0.25 ? 'middle' : (Math.cos(a) > 0 ? 'start' : 'end'));
+                  t.setAttribute('dominant-baseline', Math.abs(Math.sin(a)) < 0.25 ? 'middle' : (Math.sin(a) > 0 ? 'hanging' : 'auto'));
+                  var words = cats[i].split(' ');
+                  if (words.length > 1) {
+                    words.forEach(function (w, wi) { var ts = mk('tspan', { x: lp[0].toFixed(1), dy: (wi === 0 ? '0' : '1.05em') }); ts.textContent = w; t.appendChild(ts); });
+                  } else { t.textContent = cats[i]; }
+                  svg.appendChild(t);
+                }
+
+                models.forEach(function (m, mi) {
+                  var g = mk('g', { 'class': 'model-group', 'data-model': mi });
+                  var pts = [];
+                  for (var i = 0; i < N; i++) { var p = pt(m.vals[i], i); pts.push(p[0].toFixed(1) + ',' + p[1].toFixed(1)); }
+                  g.appendChild(mk('polygon', { points: pts.join(' '), 'class': 'model-poly', fill: m.color, stroke: m.color }));
+                  for (var i = 0; i < N; i++) {
+                    var p = pt(m.vals[i], i);
+                    var c = mk('circle', { cx: p[0].toFixed(1), cy: p[1].toFixed(1), r: 3, 'class': 'model-dot', fill: m.color });
+                    var ti = mk('title', {}); ti.textContent = m.name + ' — ' + cats[i] + ': ' + m.vals[i] + '%';
+                    c.appendChild(ti); g.appendChild(c);
+                  }
+                  g.addEventListener('mouseenter', function () { highlight(mi); });
+                  g.addEventListener('mouseleave', function () { highlight(null); });
+                  svg.appendChild(g);
+                });
+
+                var groups = svg.querySelectorAll('.model-group');
+                var legItems = [];
+                function hint() { readout.innerHTML = 'Hover legend to highlight · click to toggle · hover an axis for scores'; }
+                function highlight(mi) {
+                  if (mi == null) { svg.classList.remove('has-hl'); groups.forEach(function (g) { g.classList.remove('hl'); }); hint(); return; }
+                  svg.classList.add('has-hl');
+                  groups.forEach(function (g, i) { g.classList.toggle('hl', i === mi); });
+                  var m = models[mi], mean = Math.round(m.vals.reduce(function (s, v) { return s + v; }, 0) / N);
+                  readout.innerHTML = '<strong style="color:' + m.color + '">' + m.name + '</strong> &middot; mean ' + mean + '%';
+                }
+                function axisReadout(ai) {
+                  var rows = models.map(function (m, mi) { return { c: m.color, v: m.vals[ai], off: groups[mi].classList.contains('off') }; })
+                    .filter(function (r) { return !r.off; }).sort(function (a, b) { return b.v - a.v; });
+                  readout.innerHTML = '<strong>' + cats[ai] + '</strong> &nbsp; ' + rows.map(function (r) { return '<span style="color:' + r.c + ';font-weight:700">' + r.v + '%</span>'; }).join(' &middot; ');
+                }
+                models.forEach(function (m, mi) {
+                  var el = document.createElement('span'); el.className = 'leg-item';
+                  el.innerHTML = '<span class="leg-swatch" style="background:' + m.color + '"></span>' + m.name;
+                  el.addEventListener('mouseenter', function () { if (!groups[mi].classList.contains('off')) highlight(mi); });
+                  el.addEventListener('mouseleave', function () { highlight(null); });
+                  el.addEventListener('click', function () { var off = groups[mi].classList.toggle('off'); el.classList.toggle('off', off); highlight(null); });
+                  legend.appendChild(el); legItems.push(el);
+                });
+                svg.querySelectorAll('[data-axis]').forEach(function (el) {
+                  var ai = +el.getAttribute('data-axis');
+                  el.addEventListener('mouseenter', function () { axisReadout(ai); });
+                  el.addEventListener('mouseleave', function () { hint(); });
+                });
+                hint();
+              })();
+              </script>
+              <figcaption class="figure-caption" style="margin-bottom: 0;">
+                <strong>Knowledge evaluation through action.</strong> Act2Answer scores seven state-of-the-art VLA models across diverse commonsense and world-knowledge domains. The bottom panel contrasts action-grounded behavior on Act2Answer with manipulation performance on LIBERO &mdash; strong control success does not imply retained knowledge.
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card"><strong>1,720</strong><span>binary questions</span></div>
+          <div class="stat-card"><strong>12</strong><span>knowledge categories</span></div>
+          <div class="stat-card"><strong>7</strong><span>VLA models</span></div>
+          <div class="stat-card"><strong>9</strong><span>VLM baselines</span></div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="motivation">
+    <section class="section" id="protocol">
       <div class="container is-max-desktop content">
-        <h2 class="title is-3">Why Act2Answer?</h2>
+        <h2 class="title is-3">The Act2Answer Protocol</h2>
         <p>
-          VLA evaluation is usually task-success centric: if a policy fails, it is difficult to know whether the problem came from perception, low-level control, planning, or missing knowledge. Act2Answer isolates a sharper question: can the model use relevant commonsense or world knowledge to choose an action?
+          VLA evaluation is usually task-success centric: if a policy fails, it is difficult to know whether the problem came from <strong>perception</strong>, low-level <strong>control</strong>, the <strong>environment</strong>, or missing <strong>knowledge</strong>. Because the same success rate can arise from very different causes, end-to-end task success is rarely diagnostic of what a VLA actually knows. Act2Answer isolates a sharper question: <em>can the model use relevant commonsense or world knowledge to choose an action?</em>
         </p>
         <p>
-          Instead of asking a model to decode a textual answer, each VLM benchmark question is converted into a short tabletop episode. The agent sees two visual answer options and must move a cube onto the correct answer plate. This keeps the setting embodied while reducing long-horizon control confounds.
+          Instead of asking a model to decode a textual answer, each VLM benchmark question is converted into a short tabletop episode. The agent sees two visual answer options and must move a cube onto the correct answer plate. This keeps the setting embodied while deliberately reducing motor complexity and long-horizon control confounds, so the outcome is more directly informative about retained knowledge.
         </p>
-      </div>
-    </section>
-
-    <section class="section" id="examples">
-      <div class="container is-max-desktop content">
-        <h2 class="title is-3">Action-as-Answer Episodes</h2>
-        <img src="static/images/samples2.jpg" alt="Act2Answer episode examples" style="width: 100%; border-radius: 12px; transition: none; display: block; margin: 0 auto;">
+        <img src="static/images/samples2.jpg" alt="Act2Answer episode examples" style="width: 100%; border-radius: 12px; transition: none; display: block; margin: 1.25rem auto 0;">
         <p class="figure-caption">
-          <strong>Example Act2Answer episodes.</strong> Each episode is built from a VLM benchmark question. The embodied agent must interpret the instruction and control the robot arm to move the cube onto the correct answer plate.
+          <strong>Example Act2Answer episodes, built on top of VLM benchmark questions.</strong> In each episode, the embodied agent must interpret a natural-language instruction and control the robot arm to move the cube onto the correct answer plate.
         </p>
       </div>
     </section>
@@ -315,42 +681,447 @@
         <h2 class="title is-3">Benchmark Construction</h2>
         <img src="static/images/data_processing3.png" alt="Act2Answer data curation pipeline" style="width: 100%; border-radius: 12px; transition: none; display: block; margin: 0 auto;">
         <p class="figure-caption">
-          <strong>Data curation pipeline.</strong> Act2Answer selects, filters, normalizes, and converts VLM benchmark items into embodied binary-choice episodes with consistent answer placement.
+          <strong>Data curation pipeline.</strong> Act2Answer selects tasks matching the target categories, filters and normalizes them for instruction length and visual legibility, converts open-ended or multiple-choice items into binary decisions, and wraps each one into an embodied environment with consistent answer placement.
         </p>
+
+<p>
+          Rather than authoring new questions from scratch, Act2Answer adapts five established, community-validated VLM benchmarks into a single embodied interface. Each source contributes the knowledge domains it covers best, grounding our evaluation in already-validated material while testing whether the same distinctions survive the transfer from VLM to VLA.
+        </p>
+        <p class="table-note" style="margin-bottom: .5rem;"><strong>Hover</strong> (or tap) a domain in the wheel to reveal its source benchmarks and per-category curation counts.</p>
+        <div class="pie-wrap">
+          <div class="pie-figure">
+            <svg id="domainWheel" class="pie-svg" viewBox="0 0 400 400" role="img" aria-label="Interactive wheel of the seven Act2Answer knowledge domains"></svg>
+          </div>
+          <div class="pie-panel" id="piePanel" aria-live="polite"></div>
+        </div>
+
+        <script>
+        (function () {
+          var domains = [
+            { name: 'Physical', color: '#6f9bd1', cats: [
+              { cat: 'Attribute', src: 'MLLM-CompBench', pool: '5,386', fin: 300 },
+              { cat: 'State', src: 'MLLM-CompBench', pool: '1,066', fin: 300 },
+              { cat: 'Color', src: 'VL-Think', pool: '11 concepts', fin: 300 },
+              { cat: 'Shape', src: 'IconQA', pool: '12,798', fin: 300 },
+              { cat: 'Symmetry', src: 'IconQA', pool: '362', fin: 300 }
+            ] },
+            { name: 'Temporal', color: '#7cc47f', cats: [
+              { cat: 'Time', src: 'IconQA', pool: '508', fin: 300 }
+            ] },
+            { name: 'Quantitative', color: '#cb5b4c', cats: [
+              { cat: 'Counting', src: 'IconQA', pool: '5,001', fin: 300 }
+            ] },
+            { name: 'Biological', color: '#a05bb5', cats: [
+              { cat: 'Living World', src: 'OK-VQA', pool: '2,336', fin: 300 }
+            ] },
+            { name: 'Social', color: '#e08a4b', cats: [
+              { cat: 'Emotion', src: 'MLLM-CompBench', pool: '5,254', fin: 300 }
+            ] },
+            { name: 'Normative', color: '#57bfae', cats: [
+              { cat: 'Public Info', src: 'VL-Think', pool: '14 concepts', fin: 300 },
+              { cat: 'Traffic', src: 'VL-Think', pool: '24 concepts', fin: 300 }
+            ] },
+            { name: 'Cultural', color: '#e8c34a', cats: [
+              { cat: 'Celebrity', src: 'MMBench', pool: '316', fin: 140 }
+            ] }
+          ];
+          var NS = 'http://www.w3.org/2000/svg';
+          var svg = document.getElementById('domainWheel');
+          var panel = document.getElementById('piePanel');
+          if (!svg || !panel) return;
+          var cx = 200, cy = 200, R = 175, r = 64, seg = 360 / domains.length;
+
+          function pt(rad, ang) { var a = (ang - 90) * Math.PI / 180; return [cx + rad * Math.cos(a), cy + rad * Math.sin(a)]; }
+          function slicePath(a0, a1) {
+            var o0 = pt(R, a0), o1 = pt(R, a1), i1 = pt(r, a1), i0 = pt(r, a0), large = (a1 - a0) > 180 ? 1 : 0;
+            return 'M ' + o0[0].toFixed(2) + ' ' + o0[1].toFixed(2) +
+              ' A ' + R + ' ' + R + ' 0 ' + large + ' 1 ' + o1[0].toFixed(2) + ' ' + o1[1].toFixed(2) +
+              ' L ' + i1[0].toFixed(2) + ' ' + i1[1].toFixed(2) +
+              ' A ' + r + ' ' + r + ' 0 ' + large + ' 0 ' + i0[0].toFixed(2) + ' ' + i0[1].toFixed(2) + ' Z';
+          }
+          function overview() {
+            panel.innerHTML = '<div class="pp-head">Knowledge domains</div>' +
+              '<p class="pp-sub">The Act2Answer suite spans <strong>7 knowledge domains</strong> across <strong>12 categories</strong>, curated from <strong>5</strong> source benchmarks into <strong>1,720</strong> binary items &mdash; <strong>3,440</strong> evaluation episodes once original and swapped left/right layouts are counted. Hover a slice for source-level detail.</p>';
+          }
+          function detail(d) {
+            var rows = d.cats.map(function (c) {
+              return '<tr><td>' + c.cat + '</td><td>' + c.src + '</td><td class="num">' + c.pool + '</td><td class="num">' + c.fin + '</td></tr>';
+            }).join('');
+            var tot = d.cats.reduce(function (s, c) { return s + c.fin; }, 0);
+            panel.innerHTML = '<div class="pp-head"><span class="pp-dot" style="background:' + d.color + '"></span>' + d.name + '</div>' +
+              '<table class="pp-table"><thead><tr><th>Category</th><th>Source</th><th class="num">Pool</th><th class="num">Final</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+              '<div class="pp-total">' + d.cats.length + (d.cats.length > 1 ? ' categories' : ' category') + ' &middot; ' + tot.toLocaleString() + ' eval episodes</div>';
+          }
+          function setActive(idx) {
+            var paths = svg.querySelectorAll('path.slice');
+            if (idx == null) { svg.classList.remove('has-active'); paths.forEach(function (p) { p.classList.remove('active'); }); overview(); return; }
+            svg.classList.add('has-active');
+            paths.forEach(function (p, i) { p.classList.toggle('active', i === idx); });
+            detail(domains[idx]);
+          }
+          domains.forEach(function (d, i) {
+            var a0 = i * seg, a1 = (i + 1) * seg, am = (a0 + a1) / 2;
+            var p = document.createElementNS(NS, 'path');
+            p.setAttribute('d', slicePath(a0, a1));
+            p.setAttribute('fill', d.color);
+            p.setAttribute('class', 'slice');
+            p.setAttribute('tabindex', '0');
+            p.setAttribute('role', 'button');
+            p.setAttribute('aria-label', d.name + ' domain');
+            p.addEventListener('mouseenter', function () { setActive(i); });
+            p.addEventListener('focus', function () { setActive(i); });
+            p.addEventListener('click', function () { setActive(i); });
+            svg.appendChild(p);
+
+            var lp = pt((R + r) / 2, am), rot = am - 90;
+            if (rot > 90) rot -= 180; if (rot < -90) rot += 180;
+            var t = document.createElementNS(NS, 'text');
+            t.setAttribute('x', lp[0].toFixed(1)); t.setAttribute('y', lp[1].toFixed(1));
+            t.setAttribute('text-anchor', 'middle'); t.setAttribute('dominant-baseline', 'central');
+            t.setAttribute('transform', 'rotate(' + rot.toFixed(1) + ' ' + lp[0].toFixed(1) + ' ' + lp[1].toFixed(1) + ')');
+            t.setAttribute('class', 'slice-label');
+            t.textContent = d.name;
+            svg.appendChild(t);
+          });
+          var hole = document.createElementNS(NS, 'circle');
+          hole.setAttribute('cx', cx); hole.setAttribute('cy', cy); hole.setAttribute('r', r - 6); hole.setAttribute('fill', '#fff');
+          svg.appendChild(hole);
+          var n1 = document.createElementNS(NS, 'text');
+          n1.setAttribute('x', cx); n1.setAttribute('y', cy - 5); n1.setAttribute('text-anchor', 'middle');
+          n1.setAttribute('class', 'pie-center-num'); n1.setAttribute('font-size', '22'); n1.textContent = '1,720';
+          var n2 = document.createElementNS(NS, 'text');
+          n2.setAttribute('x', cx); n2.setAttribute('y', cy + 15); n2.setAttribute('text-anchor', 'middle');
+          n2.setAttribute('class', 'pie-center-lbl'); n2.setAttribute('font-size', '11'); n2.textContent = 'items';
+          svg.appendChild(n1); svg.appendChild(n2);
+
+          svg.addEventListener('mouseleave', function () { setActive(null); });
+          overview();
+        })();
+        </script>
+        <p class="table-note">
+          Per-category curation statistics. The full suite covers 12 categories with 1,720 unique binary-choice items, corresponding to 3,440 evaluation episodes once both the original and swapped left/right configurations are included. <em>Final Eval</em> counts episodes after swapping; for VL-Think, <em>Initial Pool</em> reports the number of source concepts rather than raw images.
+        </p>
+
+        
+      </div>
+    </section>
+
+    <section class="section" id="results">
+      <div class="container is-max-desktop content">
+        <h2 class="title is-3">Main Results</h2>
         <p>
-          The suite adapts established VLM benchmarks into a shared embodied interface. Questions are rewritten into short robot instructions, answer candidates are grounded as visual plates, and spatial swaps are used to reduce fixed side preferences.
+          Results across all knowledge-sensitive categories. VLA models (bottom) answer by embodied action selection under Act2Answer; VLM baselines (top) use an action-free text probe as an upper-bound reference. Cell color encodes success rate from <span style="color:#b3441f;font-weight:700;">below chance</span> to <span style="color:#3a7d2c;font-weight:700;">strong</span>; <strong>bold</strong> marks the best score in a column within each block.
         </p>
-        <div class="knowledge-list">
-          <p><strong>Physical:</strong> object attributes, states, color, shape, symmetry, affordances, and physical plausibility.</p>
-          <p><strong>Temporal:</strong> event order, duration, time reasoning, and short-horizon prediction.</p>
-          <p><strong>Quantitative:</strong> counting, magnitude comparison, and basic resource reasoning.</p>
-          <p><strong>Biological:</strong> living-world distinctions, vulnerability, animal and plant needs.</p>
-          <p><strong>Social:</strong> emotions, roles, intentions, relations, and interaction context.</p>
-          <p><strong>Normative:</strong> safety rules, public information, traffic rules, and contextually appropriate behavior.</p>
+        <div class="legend">
+          <span class="swatch"><span class="chip" style="background:var(--heat-r)"></span> &lt;46%</span>
+          <span class="swatch"><span class="chip" style="background:var(--heat-o)"></span> 46&ndash;53%</span>
+          <span class="swatch"><span class="chip" style="background:var(--heat-lg)"></span> 54&ndash;59%</span>
+          <span class="swatch"><span class="chip" style="background:var(--heat-g)"></span> 60&ndash;89%</span>
+          <span class="swatch"><span class="chip" style="background:var(--heat-dg)"></span> &ge;90%</span>
+        </div>
+        <div class="table-scroll">
+          <table class="results">
+            <thead>
+              <tr>
+                <th class="model" rowspan="2">Model</th>
+                <th class="group">Social</th>
+                <th class="group" colspan="5">Physical</th>
+                <th class="group">Quant.</th>
+                <th class="group">Temporal</th>
+                <th class="group" colspan="2">Normative</th>
+                <th class="group">Cultural</th>
+                <th class="group">Biological</th>
+              </tr>
+              <tr>
+                <th>Emotion</th>
+                <th>Attribute</th>
+                <th>State</th>
+                <th>Color</th>
+                <th>Shape</th>
+                <th>Symmetry</th>
+                <th>Counting</th>
+                <th>Time</th>
+                <th>Public&nbsp;Info</th>
+                <th>Traffic</th>
+                <th>Celebrity</th>
+                <th>Living&nbsp;World</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="block-head"><td colspan="13">Vision-Language Models &mdash; action-free text probe</td></tr>
+              <tr>
+                <td class="model">InternVL3.5-8B</td>
+                <td class="h-dg">95%</td><td class="h-g">68%</td><td class="h-g">64%</td><td class="h-dg best">100%</td><td class="h-g">89%</td><td class="h-g">69%</td><td class="h-o">52%</td><td class="h-dg">99%</td><td class="h-g">85%</td><td class="h-g">75%</td><td class="h-dg">99%</td><td class="h-dg">91%</td>
+              </tr>
+              <tr>
+                <td class="model">InternVL3.5-38B</td>
+                <td class="h-dg best">99%</td><td class="h-g best">73%</td><td class="h-g">68%</td><td class="h-dg best">100%</td><td class="h-dg">96%</td><td class="h-g best">83%</td><td class="h-lg">59%</td><td class="h-dg best">100%</td><td class="h-dg best">94%</td><td class="h-g">81%</td><td class="h-dg best">100%</td><td class="h-dg">96%</td>
+              </tr>
+              <tr>
+                <td class="model">Ovis2.5-9B</td>
+                <td class="h-g">89%</td><td class="h-g">69%</td><td class="h-g best">69%</td><td class="h-dg best">100%</td><td class="h-dg best">98%</td><td class="h-g best">83%</td><td class="h-lg">59%</td><td class="h-dg">99%</td><td class="h-g">88%</td><td class="h-g">85%</td><td class="h-dg best">100%</td><td class="h-dg best">97%</td>
+              </tr>
+              <tr>
+                <td class="model">Qwen2.5-7B</td>
+                <td class="h-g">89%</td><td class="h-g">64%</td><td class="h-g">68%</td><td class="h-dg best">100%</td><td class="h-dg">90%</td><td class="h-g">78%</td><td class="h-g">62%</td><td class="h-dg">99%</td><td class="h-g">80%</td><td class="h-g">86%</td><td class="h-dg best">100%</td><td class="h-dg">94%</td>
+              </tr>
+              <tr>
+                <td class="model">Qwen2.5-32B</td>
+                <td class="h-dg best">99%</td><td class="h-g">69%</td><td class="h-g best">69%</td><td class="h-dg best">100%</td><td class="h-dg">93%</td><td class="h-g best">83%</td><td class="h-g">61%</td><td class="h-dg">99%</td><td class="h-g">85%</td><td class="h-g">86%</td><td class="h-dg best">100%</td><td class="h-dg">96%</td>
+              </tr>
+              <tr>
+                <td class="model">Qwen3-8B</td>
+                <td class="h-g">86%</td><td class="h-g">68%</td><td class="h-g">67%</td><td class="h-dg best">100%</td><td class="h-dg">97%</td><td class="h-g">81%</td><td class="h-g best">65%</td><td class="h-dg">98%</td><td class="h-g">83%</td><td class="h-dg best">93%</td><td class="h-dg best">100%</td><td class="h-dg">95%</td>
+              </tr>
+              <tr>
+                <td class="model">Qwen3-32B</td>
+                <td class="h-dg">92%</td><td class="h-g">67%</td><td class="h-g">66%</td><td class="h-dg best">100%</td><td class="h-dg best">98%</td><td class="h-g best">83%</td><td class="h-lg">59%</td><td class="h-dg best">100%</td><td class="h-g">87%</td><td class="h-dg">90%</td><td class="h-dg best">100%</td><td class="h-g">86%</td>
+              </tr>
+              <tr>
+                <td class="model">Prismatic-VLM-7B</td>
+                <td class="h-g">82%</td><td class="h-lg">59%</td><td class="h-g">61%</td><td class="h-dg">96%</td><td class="h-g">85%</td><td class="h-g">67%</td><td class="h-o">52%</td><td class="h-dg">96%</td><td class="h-g">75%</td><td class="h-g">76%</td><td class="h-dg">99%</td><td class="h-g">82%</td>
+              </tr>
+              <tr>
+                <td class="model">PaliGemma-3B</td>
+                <td class="h-o">53%</td><td class="h-o">50%</td><td class="h-o">52%</td><td class="h-o">47%</td><td class="h-o">48%</td><td class="h-o">49%</td><td class="h-o">49%</td><td class="h-o">51%</td><td class="h-o">48%</td><td class="h-o">49%</td><td class="h-o">48%</td><td class="h-o">49%</td>
+              </tr>
+
+              <tr class="block-head"><td colspan="13">Vision-Language-Action Models &mdash; embodied action selection (Act2Answer)</td></tr>
+              <tr>
+                <td class="model">OpenVLA</td>
+                <td class="h-o">48%</td><td class="h-o">51%</td><td class="h-o">49%</td><td class="h-g">89%</td><td class="h-g">64%</td><td class="h-r">45%</td><td class="h-o">48%</td><td class="h-o">49%</td><td class="h-o">49%</td><td class="h-o">46%</td><td class="h-o">50%</td><td class="h-o">52%</td>
+              </tr>
+              <tr>
+                <td class="model">OpenVLA (SFT)</td>
+                <td class="h-r">41%</td><td class="h-r">45%</td><td class="h-r">44%</td><td class="h-g">82%</td><td class="h-o">53%</td><td class="h-r">38%</td><td class="h-o">46%</td><td class="h-r">37%</td><td class="h-o">47%</td><td class="h-o">46%</td><td class="h-r">42%</td><td class="h-r">45%</td>
+              </tr>
+              <tr>
+                <td class="model">OpenVLA (RL)</td>
+                <td class="h-o">46%</td><td class="h-o">50%</td><td class="h-o">47%</td><td class="h-g">88%</td><td class="h-g">61%</td><td class="h-r">44%</td><td class="h-o">50%</td><td class="h-o">48%</td><td class="h-o">46%</td><td class="h-o">48%</td><td class="h-o">47%</td><td class="h-o">52%</td>
+              </tr>
+              <tr>
+                <td class="model">SpatialVLA</td>
+                <td class="h-o">47%</td><td class="h-o">48%</td><td class="h-o">50%</td><td class="h-g">87%</td><td class="h-g">83%</td><td class="h-r">45%</td><td class="h-o best">52%</td><td class="h-o">46%</td><td class="h-o">51%</td><td class="h-lg">57%</td><td class="h-lg">55%</td><td class="h-o">49%</td>
+              </tr>
+              <tr>
+                <td class="model">&pi;<sub>0</sub></td>
+                <td class="h-o">51%</td><td class="h-o">50%</td><td class="h-o">48%</td><td class="h-g">86%</td><td class="h-o">49%</td><td class="h-o best">46%</td><td class="h-o">50%</td><td class="h-o">48%</td><td class="h-o">46%</td><td class="h-o">48%</td><td class="h-r">38%</td><td class="h-r">45%</td>
+              </tr>
+              <tr>
+                <td class="model">Magma</td>
+                <td class="h-g best">72%</td><td class="h-g best">63%</td><td class="h-lg best">59%</td><td class="h-g">89%</td><td class="h-g best">81%</td><td class="h-r">37%</td><td class="h-o">51%</td><td class="h-g best">77%</td><td class="h-g best">88%</td><td class="h-g best">80%</td><td class="h-dg best">94%</td><td class="h-g best">77%</td>
+              </tr>
+              <tr>
+                <td class="model">Xiaomi-Robotics-R0</td>
+                <td class="h-g">63%</td><td class="h-o">52%</td><td class="h-o">50%</td><td class="h-dg best">91%</td><td class="h-g">82%</td><td class="h-lg best">58%</td><td class="h-o">48%</td><td class="h-o">52%</td><td class="h-g">64%</td><td class="h-lg">57%</td><td class="h-g">68%</td><td class="h-lg">56%</td>
+              </tr>
+              <tr>
+                <td class="model">InternVLA-M1</td>
+                <td class="h-o">53%</td><td class="h-o">49%</td><td class="h-o">53%</td><td class="h-dg">90%</td><td class="h-g">66%</td><td class="h-r">43%</td><td class="h-o">48%</td><td class="h-o">49%</td><td class="h-lg">54%</td><td class="h-o">53%</td><td class="h-o">52%</td><td class="h-lg best">58%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">Main Act2Answer results. OpenVLA (SFT) and OpenVLA (RL) are downstream fine-tuning ablations of OpenVLA on a small pick-and-place dataset.</p>
+
+        <div class="findings">
+          <div class="finding-card">
+            <h4>RQ1 &middot; Simple primitives</h4>
+            <p>Nearly all VLAs solve basic perceptual tasks such as <strong>Color</strong> and <strong>Shape</strong> with high success, so simple visual distinctions remain behaviorally accessible. &pi;<sub>0</sub> is a notable exception on Shape, where it sits near chance.</p>
+          </div>
+          <div class="finding-card">
+            <h4>RQ2 &middot; Richer semantics</h4>
+            <p>On non-primitive categories most VLAs hover at or near chance, with <strong>Magma</strong> the clear exception. No evaluated VLA exceeds chance on <strong>Symmetry</strong> or <strong>Counting</strong> &mdash; these stay uniformly hard.</p>
+          </div>
+          <div class="finding-card">
+            <h4>RQ3 &middot; The VLM&ndash;VLA gap</h4>
+            <p>Compared to their source VLMs under an action-free probe, VLAs drop by roughly <strong>20&ndash;40 points</strong> across most domains &mdash; evidence of a marked decline in knowledge-sensitive performance after embodied adaptation.</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="probing">
+    <section class="section hero is-light" id="probing">
       <div class="container is-max-desktop content">
         <h2 class="title is-3">Layerwise Intent Probing</h2>
         <p>
-          Beyond task success, Act2Answer measures whether answer-relevant information is linearly recoverable from internal VLA representations. A probe predicts the selected option from each layer, helping localize whether knowledge remains in the backbone and whether it survives into the action pathway.
+          Beyond task success, Act2Answer measures whether answer-relevant information is linearly recoverable from internal VLA representations. A linear probe trained at each layer predicts the correct answer option, helping localize whether knowledge remains in the backbone and whether it survives into the action pathway.
         </p>
-        <img src="static/images/validation_grid_from_txt.png" alt="Layerwise probing results" style="width: 100%; border-radius: 12px; transition: none; display: block; margin: 0 auto;">
-        <p class="figure-caption">
-          <strong>Probing results.</strong> Prefix labels indicate representations from the VLM component, while Action labels indicate representations from the action component. Answer-relevant signals often peak in middle layers and attenuate toward later action layers.
-        </p>
+        <div class="columns is-vcentered">
+          <div class="column is-7">
+            <figure style="margin: 0;">
+              <div class="probing-charts">
+                <div class="probing-plot">
+                  <div class="probing-ylabel">Validation Acc. (%)</div>
+                  <div class="probing-grid" id="probingGrid"></div>
+                </div>
+                <div class="probing-xlabel">Layer Index</div>
+                <div class="probing-readout" id="probingReadout"></div>
+                <div class="probing-legend" id="probingLegend"></div>
+                <div class="probing-axisnote">Hover a model &mdash; in the legend, on its shaded area, or in the retention table &mdash; to highlight it &nbsp;&middot;&nbsp; hover a point for its value</div>
+              </div>
+              <script src="static/js/probing_data.js"></script>
+              <script>
+              (function () {
+                var DATA = window.PROBING_DATA; if (!DATA) return;
+                var grid = document.getElementById('probingGrid'), legend = document.getElementById('probingLegend');
+                if (!grid || !legend) return;
+                var NS = 'http://www.w3.org/2000/svg';
+                var COLORS = { smolvla: '#56B4E9', pi0: '#D55E00', openvla: '#0072B2', spatialvla: '#E69F00', magma: '#9467BD', xiaomi: '#009E73' };
+                var LABELS = { smolvla: 'SmolVLA', pi0: 'π₀', openvla: 'OpenVLA', spatialvla: 'SpatialVLA', magma: 'Magma', xiaomi: 'Xiaomi-Robotics-R0' };
+                var ORDER = ['smolvla', 'pi0', 'openvla', 'spatialvla', 'magma', 'xiaomi'];
+                var RET = { smolvla: 0.5809, pi0: 0.3620, openvla: 0.7697, spatialvla: 0.7808, magma: 0.8702, xiaomi: 0.8159 };
+                var CATS = ['Attribute', 'State', 'Emotion', 'Quantity'];
+                function mk(t, a) { var e = document.createElementNS(NS, t); for (var k in a) e.setAttribute(k, a[k]); return e; }
+                function yticks(min, max, n) {
+                  var raw = (max - min) / n, base = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10)), err = raw / base, nf;
+                  if (err < 1.5) nf = 1; else if (err < 3) nf = 2; else if (err < 7) nf = 5; else nf = 10;
+                  var step = nf * base, t = [];
+                  for (var v = Math.ceil(min / step) * step; v <= max + 1e-9; v += step) t.push(v);
+                  return t;
+                }
+                var allGroups = [];
+
+                CATS.forEach(function (cat) {
+                  var d = DATA[cat]; if (!d) return;
+                  var W = 300, H = 230, mL = 30, mR = 9, mT = 24, mB = 24;
+                  var pw = W - mL - mR, ph = H - mT - mB, xmax = d.x_max, ymin = d.y_min, ymax = d.y_max;
+                  function X(v) { return mL + v / xmax * pw; }
+                  function Y(v) { return mT + (1 - (v - ymin) / (ymax - ymin)) * ph; }
+                  function fillPoints(pre, act) {
+                    if (!pre.length || !act.length) return null;
+                    var x0 = Math.max(pre[0][0], act[0][0]), x1 = Math.min(pre[pre.length - 1][0], act[act.length - 1][0]);
+                    if (x1 <= x0) return null;
+                    function ip(arr, xq) {
+                      if (xq <= arr[0][0]) return arr[0][1];
+                      if (xq >= arr[arr.length - 1][0]) return arr[arr.length - 1][1];
+                      for (var i = 1; i < arr.length; i++) if (arr[i][0] >= xq) { var a = arr[i - 1], b = arr[i]; return a[1] + (xq - a[0]) / (b[0] - a[0]) * (b[1] - a[1]); }
+                      return arr[arr.length - 1][1];
+                    }
+                    var xs = []; for (var xv = Math.ceil(x0); xv <= Math.floor(x1); xv++) xs.push(xv);
+                    if (!xs.length || xs[0] > x0) xs.unshift(x0);
+                    if (xs[xs.length - 1] < x1) xs.push(x1);
+                    var s = xs.map(function (x) { return X(x).toFixed(1) + ',' + Y(ip(pre, x)).toFixed(1); });
+                    for (var j = xs.length - 1; j >= 0; j--) s.push(X(xs[j]).toFixed(1) + ',' + Y(ip(act, xs[j])).toFixed(1));
+                    return s.join(' ');
+                  }
+                  var svg = mk('svg', { 'class': 'pl-svg', viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': cat + ' layerwise probing' });
+                  var ti = mk('text', { x: W / 2, y: 15, 'class': 'pl-title', 'text-anchor': 'middle' }); ti.textContent = cat; svg.appendChild(ti);
+                  yticks(ymin, ymax, 5).forEach(function (t) {
+                    if (t < ymin || t > ymax) return;
+                    var y = Y(t);
+                    svg.appendChild(mk('line', { x1: mL, y1: y.toFixed(1), x2: W - mR, y2: y.toFixed(1), 'class': 'pl-grid' }));
+                    var l = mk('text', { x: mL - 4, y: (y + 3).toFixed(1), 'class': 'pl-axislab', 'text-anchor': 'end' }); l.textContent = Math.round(t); svg.appendChild(l);
+                  });
+                  for (var xx = 0; xx <= xmax; xx += 8) {
+                    var x = X(xx);
+                    svg.appendChild(mk('line', { x1: x.toFixed(1), y1: mT, x2: x.toFixed(1), y2: H - mB, 'class': 'pl-grid' }));
+                    var l2 = mk('text', { x: x.toFixed(1), y: H - mB + 12, 'class': 'pl-axislab', 'text-anchor': 'middle' }); l2.textContent = xx; svg.appendChild(l2);
+                  }
+                  ORDER.forEach(function (mdl) {
+                    var md = d.models[mdl]; if (!md) return;
+                    var color = COLORS[mdl], g = mk('g', { 'class': 'pl-group', 'data-model': mdl });
+                    var fp = fillPoints(md.prefix || [], md.action || []);
+                    if (fp) g.appendChild(mk('polygon', { points: fp, 'class': 'pl-fill', fill: color }));
+                    ['prefix', 'action'].forEach(function (part) {
+                      var arr = md[part]; if (!arr || !arr.length) return;
+                      var pts = arr.map(function (p) { return X(p[0]).toFixed(1) + ',' + Y(p[1]).toFixed(1); }).join(' ');
+                      g.appendChild(mk('polyline', { points: pts, 'class': 'pl-line' + (part === 'action' ? ' action' : ''), stroke: color }));
+                      arr.forEach(function (p) {
+                        var dot = mk('circle', { cx: X(p[0]).toFixed(1), cy: Y(p[1]).toFixed(1), r: 2, 'class': 'pl-dot', fill: part === 'action' ? '#fff' : color, stroke: color });
+                        var tt = mk('title', {}); tt.textContent = LABELS[mdl] + ' · ' + (part === 'action' ? 'Action' : 'Prefix') + ' · L' + p[0] + ': ' + p[1].toFixed(1) + '%';
+                        dot.appendChild(tt); g.appendChild(dot);
+                      });
+                    });
+                    g.addEventListener('mouseenter', function () { setHl(mdl); });
+                    g.addEventListener('mouseleave', function () { setHl(null); });
+                    svg.appendChild(g);
+                    allGroups.push({ model: mdl, g: g });
+                  });
+                  var cell = document.createElement('div'); cell.className = 'pl-cell'; cell.appendChild(svg); grid.appendChild(cell);
+                });
+
+                var state = { off: {}, hl: null };
+                function apply() {
+                  allGroups.forEach(function (o) {
+                    var on = !state.off[o.model];
+                    o.g.classList.toggle('off', !on);
+                    o.g.classList.toggle('dim', !!state.hl && state.hl !== o.model && on);
+                    o.g.classList.toggle('hl', state.hl === o.model && on);
+                  });
+                }
+                var readout = document.getElementById('probingReadout');
+                function setHl(m) {
+                  state.hl = (m && !state.off[m]) ? m : null; apply();
+                  if (readout) readout.innerHTML = state.hl ? '<strong style="color:' + COLORS[state.hl] + '">' + LABELS[state.hl] + '</strong> &middot; retention ' + RET[state.hl].toFixed(2) : '';
+                }
+                window.probingHighlight = setHl;
+                ORDER.forEach(function (mdl) {
+                  var el = document.createElement('span'); el.className = 'leg-item';
+                  el.innerHTML = '<span class="leg-line" style="background:' + COLORS[mdl] + '"></span>' + LABELS[mdl];
+                  el.addEventListener('mouseenter', function () { setHl(mdl); });
+                  el.addEventListener('mouseleave', function () { setHl(null); });
+                  el.addEventListener('click', function () { state.off[mdl] = !state.off[mdl]; el.classList.toggle('off', state.off[mdl]); setHl(null); });
+                  legend.appendChild(el);
+                });
+                legend.insertAdjacentHTML('beforeend',
+                  '<span class="probing-parts">' +
+                  '<span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="#475569" stroke-width="2"/><circle cx="11" cy="4" r="2.4" fill="#475569"/></svg>Prefix</span>' +
+                  '<span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="#475569" stroke-width="2" stroke-dasharray="3 2"/><circle cx="11" cy="4" r="2.4" fill="#fff" stroke="#475569"/></svg>Action</span>' +
+                  '</span>');
+              })();
+              </script>
+              <figcaption class="figure-caption" style="margin-bottom: 0;">
+                <strong>Probing results on four Act2Answer tasks.</strong> <code>Prefix</code> labels indicate representations from the VLM component, while <code>Action</code> labels indicate representations from the action component. Answer-relevant signals often peak in intermediate layers and attenuate toward the later action layers used for prediction.
+              </figcaption>
+            </figure>
+          </div>
+          <div class="column is-5">
+            <div class="table-scroll">
+              <table class="plain">
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th class="num">Prefix</th>
+                    <th class="num">Action</th>
+                    <th class="num">Retention</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr data-pmodel="magma" onmouseenter="window.probingHighlight&&probingHighlight('magma')" onmouseleave="window.probingHighlight&&probingHighlight(null)"><td><span style="color:#9467BD;font-weight:700">Magma</span></td><td class="num best">75.23</td><td class="num best">72.60</td><td class="num best">0.8702</td></tr>
+                  <tr data-pmodel="xiaomi" onmouseenter="window.probingHighlight&&probingHighlight('xiaomi')" onmouseleave="window.probingHighlight&&probingHighlight(null)"><td><span style="color:#009E73;font-weight:700">Xiaomi-Robotics-R0</span></td><td class="num">68.04</td><td class="num">64.98</td><td class="num">0.8159</td></tr>
+                  <tr data-pmodel="spatialvla" onmouseenter="window.probingHighlight&&probingHighlight('spatialvla')" onmouseleave="window.probingHighlight&&probingHighlight(null)"><td><span style="color:#E69F00;font-weight:700">SpatialVLA</span></td><td class="num">65.70</td><td class="num">62.60</td><td class="num">0.7808</td></tr>
+                  <tr data-pmodel="openvla" onmouseenter="window.probingHighlight&&probingHighlight('openvla')" onmouseleave="window.probingHighlight&&probingHighlight(null)"><td><span style="color:#0072B2;font-weight:700">OpenVLA</span></td><td class="num">68.71</td><td class="num">64.61</td><td class="num">0.7697</td></tr>
+                  <tr data-pmodel="smolvla" onmouseenter="window.probingHighlight&&probingHighlight('smolvla')" onmouseleave="window.probingHighlight&&probingHighlight(null)"><td><span style="color:#56B4E9;font-weight:700">SmolVLA</span></td><td class="num">63.18</td><td class="num">57.73</td><td class="num">0.5809</td></tr>
+                  <tr data-pmodel="pi0" onmouseenter="window.probingHighlight&&probingHighlight('pi0')" onmouseleave="window.probingHighlight&&probingHighlight(null)"><td><span style="color:#D55E00;font-weight:700">&pi;<sub>0</sub></span></td><td class="num">64.99</td><td class="num">55.40</td><td class="num">0.3620</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="table-note">
+              Averaged probing-based retention by model. <em>Prefix</em> and <em>Action</em> report the maximum probing accuracy over backbone and action-part layers; <em>Retention</em> is the chance-normalized ratio of the strongest above-chance signal in the action expert to that in the backbone.
+            </p>
+          </div>
+        </div>
+
+        <div class="takeaway-box">
+          <h3>Key takeaways</h3>
+          <ul>
+            <li><strong>Where does the knowledge go? (RQ4)</strong> Intermediate backbone layers are often above chance, yet probe accuracy declines toward the final action layers &mdash; a bottleneck where answer-relevant information is present internally but is not reliably translated into the correct action.</li>
+            <li><strong>Does vision-language supervision help? (RQ5)</strong> Models trained with joint vision-language and robotics supervision (Magma, Xiaomi-Robotics-R0, InternVLA-M1) outperform robotics-only policies (OpenVLA, SpatialVLA, &pi;<sub>0</sub>) on most knowledge-sensitive categories.</li>
+            <li><strong>Does downstream fine-tuning help? (RQ6)</strong> Additional SFT/RL on OpenVLA does not consistently improve knowledge-sensitive performance and can hurt it &mdash; State and Color drop noticeably after SFT.</li>
+          </ul>
+        </div>
       </div>
     </section>
 
-    <section class="section hero is-light" id="additional-examples">
+
+    <section class="section" id="additional-examples">
       <div class="container is-max-desktop content">
         <h2 class="title is-3">Additional Examples</h2>
         <div class="columns is-vcentered">
           <div class="column">
             <img src="static/images/sample_emotion.jpg" alt="Emotion, celebrity, and living-world examples" style="width: 100%; border-radius: 12px; display: block; transition: none;">
-            <p class="figure-caption"><strong>Social and biological categories.</strong> Emotion, celebrity, and living-world examples.</p>
+            <p class="figure-caption"><strong>Social, cultural, and biological categories.</strong> Emotion, celebrity, and living-world examples.</p>
           </div>
           <div class="column">
             <img src="static/images/sample_time.jpg" alt="Time, traffic, and public-information examples" style="width: 100%; border-radius: 12px; display: block; transition: none;">
@@ -371,8 +1142,16 @@
             <span>Copy</span>
           </button>
         </div>
-        <pre id="bibtex-code"><code>@article{TBA,
-  TBA
+        <pre id="bibtex-code"><code>@article{act2answer2026,
+  title   = {Does VLA Even Know the Basics? Measuring Commonsense and
+             World Knowledge Retention in Vision-Language-Action Models},
+  author  = {Kachaev, Nikita and Moskalenko, Andrey and Skripkin, Matvey and
+             Kurlaev, Nikita and Pugacheva, Daria and Burlova, Albina and
+             Kolosov, Mikhail and Shepelev, Denis and Kuznetsov, Andrey and
+             Tutubalina, Elena and Panov, Aleksandr I. and Kovalev, Alexey K. and
+             Shakhuro, Vlad},
+  year    = {2026},
+  note    = {Preprint. Full citation coming soon.}
 }</code></pre>
       </div>
     </section>
