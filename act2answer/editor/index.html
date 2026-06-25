@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Act2Answer · Asset Creator</title>
+<style>
+  :root { --bg:#0f1115; --panel:#1b1f27; --panel2:#232833; --line:#333b49;
+          --txt:#e7ebf0; --mut:#9aa4b2; --accent:#4f7cff; --good:#28c76f; --warn:#ff6b6b; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.45 -apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--txt); }
+  header { padding:18px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:12px; }
+  header h1 { font-size:18px; margin:0; font-weight:650; }
+  header .badge { font-size:12px; color:var(--mut); border:1px solid var(--line); padding:2px 8px; border-radius:20px; }
+  main { max-width:980px; margin:0 auto; padding:22px; }
+  .row { display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
+  .bar { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:18px; }
+  label { font-size:13px; color:var(--mut); }
+  input[type=text] { background:var(--panel2); border:1px solid var(--line); color:var(--txt);
+                     border-radius:8px; padding:9px 11px; font-size:14px; outline:none; }
+  input[type=text]:focus { border-color:var(--accent); }
+  #set-name { width:240px; }
+  #question { flex:1; min-width:280px; }
+  .tiles { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+  .card h3 { margin:0; padding:10px 14px; font-size:13px; color:var(--mut); border-bottom:1px solid var(--line); letter-spacing:.04em; text-transform:uppercase; }
+  .zone { position:relative; height:300px; display:flex; align-items:center; justify-content:center;
+          background:repeating-conic-gradient(#1a1e26 0% 25%, #161a21 0% 50%) 50%/22px 22px; cursor:pointer; }
+  .zone.drag { outline:2px dashed var(--accent); outline-offset:-6px; }
+  .zone model-viewer { width:100%; height:100%; display:none; --poster-color:transparent; background:transparent; }
+  .card.filled .zone model-viewer { display:block; }
+  .card.filled .zone .ph { display:none; }
+  .ph { color:var(--mut); text-align:center; padding:0 20px; pointer-events:none; }
+  .ph b { color:var(--txt); display:block; margin-bottom:4px; }
+  .pick { position:absolute; bottom:10px; right:10px; background:var(--panel2); color:var(--txt);
+          border:1px solid var(--line); border-radius:8px; padding:6px 10px; font-size:12px; cursor:pointer; z-index:2; }
+  .pick:hover { border-color:var(--accent); }
+  .flipbtn { position:absolute; bottom:10px; left:10px; display:none; background:var(--panel2); color:var(--txt);
+             border:1px solid var(--line); border-radius:8px; padding:6px 10px; font-size:12px; cursor:pointer; z-index:2; }
+  .flipbtn:hover { border-color:var(--accent); }
+  .flipbtn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .card.filled .flipbtn { display:block; }
+  .ans { display:flex; gap:8px; align-items:center; }
+  .ans-btn { background:var(--panel2); border:1px solid var(--line); color:var(--mut);
+             padding:9px 16px; border-radius:8px; cursor:pointer; font-size:14px; font-weight:600; }
+  .ans-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button.act { border:none; border-radius:9px; padding:10px 18px; font-size:14px; font-weight:650; cursor:pointer; color:#fff; }
+  #done { background:var(--accent); }
+  #finish { background:var(--good); }
+  button.act:disabled { opacity:.4; cursor:not-allowed; }
+  .checkbox { display:flex; align-items:center; gap:6px; color:var(--mut); font-size:13px; }
+  #tasks { margin-top:8px; display:flex; flex-direction:column; gap:6px; }
+  .task { display:flex; align-items:center; gap:10px; background:var(--panel); border:1px solid var(--line);
+          border-radius:9px; padding:7px 10px; }
+  .task .ti { color:var(--mut); width:34px; font-variant-numeric:tabular-nums; }
+  .thumb { width:34px; height:34px; object-fit:cover; border-radius:5px; border:1px solid var(--line); }
+  .task .tq { flex:1; }
+  .task .ta { font-size:12px; font-weight:700; padding:2px 8px; border-radius:5px; }
+  .task .ta.left { background:rgba(79,124,255,.18); color:#9bb4ff; }
+  .task .ta.right { background:rgba(40,199,111,.18); color:#74e6a6; }
+  .del { background:none; border:none; color:var(--mut); cursor:pointer; font-size:14px; }
+  .del:hover { color:var(--warn); }
+  .hint { color:var(--mut); font-size:13px; margin:14px 0 0; }
+  #status { color:var(--mut); font-size:12px; margin-left:auto; }
+  code { background:var(--panel2); padding:1px 5px; border-radius:4px; font-size:12px; }
+</style>
+<script type="module" src="https://unpkg.com/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+<script src="vendor/jszip.min.js"></script>
+<script defer src="editor.js"></script>
+</head>
+<body>
+<header>
+  <h1>Act2Answer · Asset Creator</h1>
+  <span class="badge">two-tile VQA tasks → ManiSkill asset set</span>
+  <span id="status">Loading…</span>
+</header>
+
+<main>
+  <div class="bar row">
+    <div><label>Asset set name</label><br><input id="set-name" type="text" value="my_act2answer_set" placeholder="my_act2answer_set"></div>
+    <span class="hint" style="margin:18px 0 0">Drop a Left &amp; Right image, write the instruction, pick the answer, then <b>Done</b>. Use <b>⇅ Flip</b> on a tile if its face is upside-down.</span>
+  </div>
+
+  <div class="tiles">
+    <div class="card" id="tile-left">
+      <h3>Left tile</h3>
+      <div class="zone">
+        <div class="ph"><b>Drop image here</b>or click to choose</div>
+        <model-viewer id="mv-left" camera-controls touch-action="pan-y" exposure="1" shadow-intensity="0.6" disable-zoom></model-viewer>
+        <button class="flipbtn" id="flip-left" type="button">⇅ Flip</button>
+        <button class="pick" type="button">Choose / Replace</button>
+        <input type="file" accept="image/*" hidden>
+      </div>
+    </div>
+    <div class="card" id="tile-right">
+      <h3>Right tile</h3>
+      <div class="zone">
+        <div class="ph"><b>Drop image here</b>or click to choose</div>
+        <model-viewer id="mv-right" camera-controls touch-action="pan-y" exposure="1" shadow-intensity="0.6" disable-zoom></model-viewer>
+        <button class="flipbtn" id="flip-right" type="button">⇅ Flip</button>
+        <button class="pick" type="button">Choose / Replace</button>
+        <input type="file" accept="image/*" hidden>
+      </div>
+    </div>
+  </div>
+
+  <div class="bar">
+    <div class="row">
+      <div style="flex:1;min-width:280px"><label>Instruction (question)</label><br>
+        <input id="question" type="text" placeholder="e.g. put cube on Napoleon" style="width:100%"></div>
+      <div class="ans" style="margin-top:18px">
+        <label>Correct&nbsp;answer</label>
+        <button class="ans-btn" data-ans="Left">Left</button>
+        <button class="ans-btn" data-ans="Right">Right</button>
+      </div>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button class="act" id="done" disabled>✓ Done — add task</button>
+      <span style="color:var(--mut)"><b id="task-count">0</b> task(s) added</span>
+      <button class="act" id="finish" style="margin-left:auto" disabled>⤓ Finish — download asset set</button>
+    </div>
+  </div>
+
+  <div id="tasks"></div>
+
+  <p class="hint">On <b>Finish</b> you get <code>&lt;set&gt;.zip</code> with <code>model_db.json</code>,
+  <code>pairs.json</code> and <code>shapes/tile_N/{textured.glb,collision.obj}</code>. Unzip into
+  <code>ManiSkill/mani_skill/assets/carrot/</code> and eval with <code>--assets &lt;set&gt;</code>.
+  Only the tile face texture changes — geometry is preserved byte-for-byte.</p>
+</main>
+</body>
+</html>
